@@ -233,6 +233,41 @@
       color: var(--text);
     }
     .ex-card-title.untitled { color: var(--text-muted); font-weight: 400; font-style: italic; }
+    .ex-card-title span.title-text {
+      flex: 1;
+      cursor: text;
+    }
+    .ex-card-title input.title-edit {
+      flex: 1;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid var(--blue);
+      color: var(--text);
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: inherit;
+      outline: none;
+      padding: 0 0 2px;
+      min-width: 0;
+    }
+    .insert-set-btn {
+      flex-shrink: 0;
+      background: var(--green);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      width: 30px; height: 30px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0;
+      transition: opacity .2s;
+      pointer-events: none;
+    }
+    .ex-card:hover  .insert-set-btn,
+    .ex-card:focus-within .insert-set-btn { opacity: 1; pointer-events: auto; }
+    .ex-card-title.active-insert .insert-set-btn { opacity: 1; pointer-events: auto; }
 
     /* ── Sets Grid ── */
     .sets-col-header, .set-row {
@@ -464,6 +499,10 @@
       <button class="s-btn s-btn-red" onclick="promptClearAll()">
         <span>✕</span> Clear All &amp; Start Over
       </button>
+            <button class="s-btn s-btn-outline" onclick="triggerImport()">
+        <span>↑</span> Import .md
+      </button>
+      <input id="import-file" type="file" accept=".md,text/markdown" style="display:none" onchange="handleImport(this)">
       <button class="s-btn s-btn-blue" onclick="exportMd()">
         <span>↓</span> Export as .md
       </button>
@@ -594,8 +633,9 @@ function render() {
 
   list.innerHTML = exercises.map((ex, ei) => `
     <div class="ex-card">
-      <div class="ex-card-title ${ex.title ? '' : 'untitled'}">
-        ${ex.title ? esc(ex.title) : 'Untitled Exercise'}
+      <div class="ex-card-title ${ex.title ? '' : 'untitled'}" onclick="toggleInsertBtn(this)">
+        <span class="title-text" onclick="event.stopPropagation(); editExTitle(this, ${ei})">${ex.title ? esc(ex.title) : 'Untitled Exercise'}</span>
+        <button class="insert-set-btn" onclick="event.stopPropagation(); insertSet(${ei})" title="Add set to this exercise">+</button>
       </div>
       <div class="sets-col-header">
         <span>Set</span><span>Reps</span><span>Weight</span>
@@ -618,6 +658,69 @@ function render() {
 function updateSavedSet(ei, si, field, val) {
   exercises[ei].sets[si][field] = val;
   save();
+}
+
+function toggleInsertBtn(titleEl) {
+  // On touch/mobile, hover doesn't apply — tap title to reveal the + button
+  titleEl.classList.toggle('active-insert');
+}
+
+function editExTitle(spanEl, ei) {
+  // Already editing
+  if (spanEl.querySelector('input')) return;
+
+  const current = exercises[ei].title || '';
+  const input   = document.createElement('input');
+  input.type      = 'text';
+  input.className = 'title-edit';
+  input.value     = current;
+  input.maxLength = 200;
+  input.autocomplete = 'off';
+  input.spellcheck   = false;
+
+  const commit = () => {
+    const val = input.value.trim();
+    exercises[ei].title = val;
+    save();
+    // Swap input back to span without full re-render
+    const span = document.createElement('span');
+    span.className = 'title-text';
+    span.onclick   = e => { e.stopPropagation(); editExTitle(span, ei); };
+    span.textContent = val || 'Untitled Exercise';
+    const bar = input.closest('.ex-card-title');
+    bar.classList.toggle('untitled', !val);
+    input.replaceWith(span);
+  };
+
+  input.addEventListener('blur',    commit);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); input.blur(); } });
+
+  spanEl.replaceWith(input);
+  input.focus();
+  input.select();
+}
+
+function insertSet(ei) {
+  const sets = exercises[ei].sets;
+  const prev = sets[sets.length - 1];
+  sets.push({
+    reps:   (prev && prev.reps)   ? prev.reps   : '',
+    weight: (prev && prev.weight) ? prev.weight : '',
+  });
+  save();
+  render();
+  // Scroll the new row into view and focus its reps input
+  setTimeout(() => {
+    const cards = document.querySelectorAll('.ex-card');
+    const card  = cards[ei];
+    if (!card) return;
+    const rows  = card.querySelectorAll('.set-row');
+    const last  = rows[rows.length - 1];
+    last?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    last?.querySelector('.set-input')?.focus();
+    // Re-show the + button on the card we just edited
+    card.querySelector('.ex-card-title')?.classList.add('active-insert');
+  }, 60);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -857,7 +960,111 @@ function exportMd() {
 }
 
 // ═══════════════════════════════════════════════════════════
-//  Modal
+//  Import Markdown
+// ═══════════════════════════════════════════════════════════
+function triggerImport() {
+  closeSettings();
+  const input = document.getElementById('import-file');
+  input.value = '';   // allow re-selecting the same file
+  input.click();
+}
+
+function handleImport(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const parsed = parseMd(e.target.result);
+    if (!parsed.length) {
+      showModal('Nothing Found', 'No exercises could be read from that file. Make sure it was exported from LIFTED.', 'OK', 'var(--blue)', () => {});
+      return;
+    }
+    const hasExisting = exercises.length > 0 ||
+      document.getElementById('ex-title-input').value.trim() ||
+      currentSets.some(s => s.reps || s.weight);
+
+    if (hasExisting) {
+      showImportChoiceModal(parsed);
+    } else {
+      loadImport(parsed, false);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function parseMd(text) {
+  const result = [];
+  let current  = null;
+
+  for (const raw of text.split('\n')) {
+    const line = raw.trim();
+
+    // Exercise heading: ## Title
+    if (line.startsWith('## ')) {
+      if (current) result.push(current);
+      const title = line.slice(3).trim().replace(/<[^>]*>/g, '').slice(0, 200);
+      current = { title, sets: [] };
+      continue;
+    }
+
+    // Data row: | 1 | value | value |  (skip header and separator rows)
+    if (current && line.startsWith('|')) {
+      const cells = line.split('|').map(c => c.trim()).filter((_, i, a) => i > 0 && i < a.length - 1);
+      if (cells.length < 3) continue;
+      const setNum = cells[0];
+      // Skip the column-header row (Set / Reps / Weight) and separator (---)
+      if (/^[:\-]+$/.test(setNum) || setNum.toLowerCase() === 'set') continue;
+      if (!/^\d+$/.test(setNum)) continue;
+
+      const reps   = cells[1] === '—' ? '' : cells[1].replace(/<[^>]*>/g, '').slice(0, 20);
+      const weight = cells[2] === '—' ? '' : cells[2].replace(/<[^>]*>/g, '').slice(0, 20);
+      current.sets.push({ reps, weight });
+    }
+  }
+  if (current) result.push(current);
+
+  // Drop any exercises that ended up with no sets
+  return result.filter(ex => ex.sets.length > 0);
+}
+
+function loadImport(parsed, append) {
+  flushCurrentInputs();
+  if (append) {
+    // Save whatever is currently in progress first
+    const curTitle   = document.getElementById('ex-title-input').value.trim();
+    const curHasData = currentSets.some(s => s.reps || s.weight);
+    if (curTitle || curHasData) {
+      exercises.push({ title: curTitle || 'Untitled', sets: currentSets.map(s => ({ ...s })) });
+    }
+    exercises = [...exercises, ...parsed];
+  } else {
+    exercises = parsed;
+    document.getElementById('ex-title-input').value = '';
+    currentSets = [{ reps: '', weight: '' }];
+    renderCurrentSets();
+  }
+  save();
+  render();
+}
+
+function showImportChoiceModal(parsed) {
+  const count = parsed.length;
+  document.getElementById('modal-title').textContent = `Import ${count} Exercise${count !== 1 ? 's' : ''}?`;
+  document.getElementById('modal-body').textContent  =
+    'You already have a workout in progress. Would you like to replace it or append the imported exercises to the end?';
+
+  // Reuse modal but swap buttons
+  const btns = document.querySelector('.modal-btns');
+  btns.innerHTML = `
+    <button id="modal-cancel"  onclick="closeModal()" style="background:var(--surface2);color:var(--text);border:1px solid var(--border)">Cancel</button>
+    <button onclick="closeModal(); loadImport(importPending, true)"  style="background:var(--blue);color:#fff;font-weight:700;flex:1;padding:12px;border:none;border-radius:10px">Append</button>
+    <button onclick="closeModal(); loadImport(importPending, false)" style="background:var(--red);color:#fff;font-weight:700;flex:1;padding:12px;border:none;border-radius:10px">Replace</button>
+  `;
+  importPending = parsed;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+let importPending = null;
 // ═══════════════════════════════════════════════════════════
 function showModal(title, body, confirmLabel, confirmColor, cb) {
   document.getElementById('modal-title').textContent   = title;
