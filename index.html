@@ -449,6 +449,40 @@
     }
     .set-row:last-child { border-bottom: none; }
 
+    /* ── Set Row Swipe / Delete ── */
+    .set-row-wrap {
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+    }
+    .set-row-wrap:last-child { border-bottom: none; }
+    .set-row {
+      border-bottom: none !important;   /* border lives on wrap now */
+      transition: transform .2s cubic-bezier(0.4,0,0.2,1);
+      background: var(--surface);       /* keep bg solid while sliding */
+    }
+    .set-del-btn {
+      position: absolute;
+      right: 0; top: 0; bottom: 0;
+      width: 56px;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      font-size: 1.1rem;
+      display: flex; align-items: center; justify-content: center;
+      transform: translateX(100%);
+      transition: transform .2s cubic-bezier(0.4,0,0.2,1);
+      cursor: pointer;
+    }
+    /* Desktop hover reveal */
+    @media (hover: hover) {
+      .set-row-wrap:hover .set-del-btn  { transform: translateX(0); }
+      .set-row-wrap:hover .set-row      { transform: translateX(-56px); }
+    }
+    /* Mobile swipe reveal via JS class */
+    .set-row-wrap.show-del .set-del-btn { transform: translateX(0); }
+    .set-row-wrap.show-del .set-row     { transform: translateX(-56px); }
+
     .set-num {
       padding: 11px 16px;
       font-size: 0.85rem;
@@ -514,6 +548,60 @@
       color: #fff;
     }
     .btn-icon { font-size: 1.3rem; line-height: 1; }
+
+    /* ── Done Button ── */
+    #btn-done {
+      width: 100%;
+      border: none;
+      padding: 14px;
+      background: #166534;   /* deeper green to distinguish from Add Set */
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      transition: filter .15s;
+    }
+    #btn-done:active { filter: brightness(0.85); }
+
+    /* ── Done Card (shown after Done is pressed) ── */
+    #done-card {
+      display: none;
+      background: var(--surface);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      text-align: center;
+      padding: 24px 20px;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+    }
+    #done-card.show { display: flex; }
+    #done-card .done-check {
+      font-size: 2.2rem;
+      line-height: 1;
+    }
+    #done-card p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    #done-card button {
+      width: 100%;
+      border: none;
+      padding: 13px;
+      border-radius: 10px;
+      background: var(--blue);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: filter .15s;
+    }
+    #done-card button:active { filter: brightness(0.85); }
 
     /* ── Reorder / Delete Mode Cards ── */
     .mode-card {
@@ -757,6 +845,16 @@
         <span style="font-size:0.85rem; font-weight:700; letter-spacing:0.5px">ADD SET</span>
       </button>
     </div>
+    <button id="btn-done" onclick="doneWorkout()">
+      ✓ &nbsp;DONE
+    </button>
+  </div>
+
+  <!-- Shown after Done is pressed -->
+  <div id="done-card">
+    <div class="done-check">✓</div>
+    <p>Workout saved. Ready to export, edit, or keep going.</p>
+    <button onclick="resumeWorkout()">＋ Add Another Exercise</button>
   </div>
 </div>
 
@@ -838,14 +936,17 @@ function render() {
         <span>Set</span><span>Reps</span><span>Weight</span>
       </div>
       ${ex.sets.map((s, si) => `
-        <div class="set-row">
-          <div class="set-num">${si + 1}</div>
-          <input class="set-input" type="text" inputmode="decimal"
-            value="${esc(s.reps)}" placeholder="—"
-            onchange="updateSavedSet(${ei},${si},'reps',this.value)">
-          <input class="set-input" type="text" inputmode="decimal"
-            value="${esc(s.weight)}" placeholder="—"
-            onchange="updateSavedSet(${ei},${si},'weight',this.value)">
+        <div class="set-row-wrap">
+          <div class="set-row">
+            <div class="set-num">${si + 1}</div>
+            <input class="set-input" type="text" inputmode="decimal"
+              value="${esc(s.reps)}" placeholder="—"
+              onchange="updateSavedSet(${ei},${si},'reps',this.value)">
+            <input class="set-input" type="text" inputmode="decimal"
+              value="${esc(s.weight)}" placeholder="—"
+              onchange="updateSavedSet(${ei},${si},'weight',this.value)">
+          </div>
+          <button class="set-del-btn" onclick="deleteSavedSet(${ei},${si})" title="Delete set">🗑</button>
         </div>
       `).join('')}
       <div class="notes-toggle" onclick="toggleNotes(this)">
@@ -867,6 +968,10 @@ function render() {
       </div>
     </div>
   `).join('');
+  // attach swipe handlers to every card's sets
+  document.querySelectorAll('.ex-card').forEach((card, ei) => {
+    attachSwipeHandlers(card);
+  });
 }
 
 function updateSavedSet(ei, si, field, val) {
@@ -1052,14 +1157,134 @@ function flushCurrentInputs() {
 function renderCurrentSets() {
   const c = document.getElementById('current-sets');
   c.innerHTML = currentSets.map((s, i) => `
-    <div class="set-row">
-      <div class="set-num">${i + 1}</div>
-      <input class="set-input" type="text" inputmode="decimal"
-        value="${esc(s.reps)}" placeholder="Reps">
-      <input class="set-input" type="text" inputmode="decimal"
-        value="${esc(s.weight)}" placeholder="lbs">
+    <div class="set-row-wrap">
+      <div class="set-row">
+        <div class="set-num">${i + 1}</div>
+        <input class="set-input" type="text" inputmode="decimal"
+          value="${esc(s.reps)}" placeholder="Reps">
+        <input class="set-input" type="text" inputmode="decimal"
+          value="${esc(s.weight)}" placeholder="lbs">
+      </div>
+      <button class="set-del-btn" onclick="deleteCurrentSet(${i})" title="Delete set">🗑</button>
     </div>
   `).join('');
+  attachSwipeHandlers(c);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  Set Deletion
+// ═══════════════════════════════════════════════════════════
+function deleteCurrentSet(i) {
+  if (currentSets.length === 1) return; // keep at least one row
+  flushCurrentInputs();
+  currentSets.splice(i, 1);
+  renderCurrentSets();
+}
+
+function deleteSavedSet(ei, si) {
+  if (exercises[ei].sets.length === 1) return; // keep at least one row
+  exercises[ei].sets.splice(si, 1);
+  save();
+  render();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  Swipe-to-Delete (mobile)
+// ═══════════════════════════════════════════════════════════
+function attachSwipeHandlers(container) {
+  container.querySelectorAll('.set-row-wrap').forEach(wrap => {
+    let startX = 0, startY = 0, tracking = false;
+
+    wrap.addEventListener('touchstart', e => {
+      startX   = e.touches[0].clientX;
+      startY   = e.touches[0].clientY;
+      tracking = false;
+    }, { passive: true });
+
+    wrap.addEventListener('touchmove', e => {
+      const dx = e.touches[0].clientX - startX;
+      const dy = e.touches[0].clientY - startY;
+      if (!tracking) {
+        if (Math.abs(dx) < Math.abs(dy) || Math.abs(dx) < 6) return;
+        tracking = true;
+      }
+      if (dx < 0) {
+        e.preventDefault();
+        const row = wrap.querySelector('.set-row');
+        row.style.transition = 'none';
+        row.style.transform  = `translateX(${Math.max(dx, -56)}px)`;
+        const btn = wrap.querySelector('.set-del-btn');
+        btn.style.transition = 'none';
+        btn.style.transform  = `translateX(${Math.max(100 + (dx / 56) * 100, 0)}%)`;
+      }
+    }, { passive: false });
+
+    wrap.addEventListener('touchend', e => {
+      if (!tracking) return;
+      const dx  = e.changedTouches[0].clientX - startX;
+      const row = wrap.querySelector('.set-row');
+      const btn = wrap.querySelector('.set-del-btn');
+      row.style.transition = '';
+      btn.style.transition = '';
+      row.style.transform  = '';
+      btn.style.transform  = '';
+      if (dx < -40) {
+        wrap.classList.add('show-del');
+      } else {
+        wrap.classList.remove('show-del');
+      }
+    });
+  });
+
+  // Dismiss any open swipe when tapping elsewhere
+  document.addEventListener('touchstart', e => {
+    if (!e.target.closest('.set-row-wrap')) {
+      document.querySelectorAll('.set-row-wrap.show-del')
+        .forEach(w => w.classList.remove('show-del'));
+    }
+  }, { passive: true });
+}
+
+// ═══════════════════════════════════════════════════════════
+//  Done / Resume
+// ═══════════════════════════════════════════════════════════
+function doneWorkout() {
+  flushCurrentInputs();
+  const title    = document.getElementById('ex-title-input').value.trim();
+  const rest     = document.getElementById('cur-rest-input').value.trim();
+  const notes    = document.getElementById('cur-notes-input').value.trim();
+  const hasSets  = currentSets.some(s => s.reps || s.weight);
+
+  if (title || hasSets) {
+    exercises.push({ title, rest, notes, superset: currentSuperset, sets: currentSets.map(s => ({ ...s })) });
+    save();
+    render();
+  }
+
+  document.getElementById('current-ex').style.display = 'none';
+  document.getElementById('done-card').classList.add('show');
+}
+
+function resumeWorkout() {
+  // Reset entry form for a fresh exercise
+  document.getElementById('ex-title-input').value  = '';
+  document.getElementById('cur-rest-input').value  = '';
+  document.getElementById('cur-notes-input').value = '';
+  document.getElementById('cur-notes-body').classList.remove('open');
+  document.getElementById('cur-notes-chevron').classList.remove('open');
+  currentSuperset = null;
+  delete document.getElementById('current-ex').dataset.superset;
+  document.querySelectorAll('#cur-notes-body .ss-swatch').forEach(el => el.classList.remove('selected'));
+  currentSets = [{ reps: '', weight: '' }];
+  renderCurrentSets();
+
+  document.getElementById('done-card').classList.remove('show');
+  document.getElementById('current-ex').style.display = '';
+
+  setTimeout(() => {
+    document.getElementById('current-ex').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('ex-title-input').focus();
+  }, 60);
 }
 
 function addSet() {
