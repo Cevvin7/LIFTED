@@ -474,10 +474,9 @@
       transition: transform .2s cubic-bezier(0.4,0,0.2,1);
       cursor: pointer;
     }
-    /* Desktop hover reveal */
+    /* Desktop hover reveal — slides over the top, row stays still */
     @media (hover: hover) {
       .set-row-wrap:hover .set-del-btn  { transform: translateX(0); }
-      .set-row-wrap:hover .set-row      { transform: translateX(-56px); }
     }
     /* Mobile swipe reveal via JS class */
     .set-row-wrap.show-del .set-del-btn { transform: translateX(0); }
