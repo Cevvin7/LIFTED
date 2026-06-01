@@ -275,6 +275,160 @@
     .ex-card:focus-within .insert-set-btn { opacity: 1; pointer-events: auto; }
     .ex-card-title.active-insert .insert-set-btn { opacity: 1; pointer-events: auto; }
 
+    /* ── Rest Row ── */
+    .ex-rest-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .ex-rest-row label { font-weight: 600; white-space: nowrap; }
+    .rest-input {
+      border: none;
+      background: transparent;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.85rem;
+      font-family: inherit;
+      width: 52px;
+      text-align: center;
+      outline: none;
+      padding: 1px 2px;
+    }
+    .rest-input::placeholder { color: var(--text-muted); }
+
+    /* ── Notes Section ── */
+    .notes-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .notes-toggle:active { opacity: 0.6; }
+    .notes-chevron {
+      display: inline-block;
+      transition: transform .2s;
+      font-style: normal;
+      font-size: 0.7rem;
+    }
+    .notes-chevron.open { transform: rotate(90deg); }
+    .notes-body {
+      display: none;
+      padding: 0 16px 12px;
+      border-top: 1px solid var(--border);
+    }
+    .notes-body.open { display: block; }
+    .notes-textarea {
+      width: 100%;
+      min-height: 90px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      padding: 10px 12px;
+      outline: none;
+      resize: vertical;
+      margin-top: 10px;
+    }
+    .notes-textarea::placeholder { color: var(--text-muted); }
+
+    /* ── Current-ex meta row ── */
+    #cur-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    #cur-meta label { font-weight: 600; white-space: nowrap; }
+    #cur-notes-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    #cur-notes-toggle:active { opacity: 0.6; }
+    #cur-notes-body {
+      display: none;
+      padding: 0 16px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    #cur-notes-body.open { display: block; }
+
+    /* ── Superset Swatches ── */
+    .superset-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px 12px;
+      flex-wrap: wrap;
+    }
+    .superset-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.4px;
+      white-space: nowrap;
+    }
+    .ss-swatches { display: flex; gap: 8px; align-items: center; }
+    .ss-swatch {
+      width: 26px; height: 26px;
+      border-radius: 6px;
+      border: 3px solid transparent;
+      cursor: pointer;
+      transition: transform .15s, border-color .15s;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .ss-swatch:active { transform: scale(0.88); }
+    .ss-swatch.selected {
+      border-color: var(--text);
+      transform: scale(1.1);
+    }
+    .ss-swatch[data-color="red"]    { background: #ef4444; }
+    .ss-swatch[data-color="orange"] { background: #f97316; }
+    .ss-swatch[data-color="yellow"] { background: #eab308; }
+    .ss-swatch[data-color="purple"] { background: #9333ea; }
+
+    /* ── Title bar superset colors ── */
+    .ex-card[data-superset="red"]    .ex-card-title { background: #ef4444; color: #fff; border-color: #ef4444; }
+    .ex-card[data-superset="orange"] .ex-card-title { background: #f97316; color: #fff; border-color: #f97316; }
+    .ex-card[data-superset="yellow"] .ex-card-title { background: #eab308; color: #1a1a1a; border-color: #eab308; }
+    .ex-card[data-superset="purple"] .ex-card-title { background: #9333ea; color: #fff; border-color: #9333ea; }
+
+    /* Keep insert-btn visible on colored title bars */
+    .ex-card[data-superset] .insert-set-btn { background: rgba(0,0,0,0.25); }
+
+    /* Current exercise superset indicator on title input */
+    #current-ex[data-superset="red"]    #ex-title-input { border-left: 5px solid #ef4444; }
+    #current-ex[data-superset="orange"] #ex-title-input { border-left: 5px solid #f97316; }
+    #current-ex[data-superset="yellow"] #ex-title-input { border-left: 5px solid #eab308; }
+    #current-ex[data-superset="purple"] #ex-title-input { border-left: 5px solid #9333ea; }
+
     /* ── Sets Grid ── */
     .sets-col-header, .set-row {
       display: grid;
@@ -561,6 +715,27 @@
   <!-- Active exercise entry -->
   <div id="current-ex">
     <input id="ex-title-input" type="text" placeholder="Exercise Title" autocomplete="off" autocorrect="off" spellcheck="false">
+    <div id="cur-meta">
+      <label for="cur-rest-input">⏱ Rest:</label>
+      <input id="cur-rest-input" class="rest-input" type="text" inputmode="decimal" placeholder="—" maxlength="6">
+      <span style="font-size:0.82rem">sec</span>
+    </div>
+    <div id="cur-notes-toggle" onclick="toggleCurNotes()">
+      <i class="notes-chevron" id="cur-notes-chevron">▶</i>
+      <span>Notes</span>
+    </div>
+    <div id="cur-notes-body">
+      <textarea id="cur-notes-input" class="notes-textarea" placeholder="Notes…" rows="3"></textarea>
+      <div class="superset-row">
+        <span class="superset-label">Superset:</span>
+        <div class="ss-swatches">
+          <div class="ss-swatch" data-color="red"    onclick="setCurSuperset('red')"   title="Red"></div>
+          <div class="ss-swatch" data-color="orange" onclick="setCurSuperset('orange')" title="Orange"></div>
+          <div class="ss-swatch" data-color="yellow" onclick="setCurSuperset('yellow')" title="Yellow"></div>
+          <div class="ss-swatch" data-color="purple" onclick="setCurSuperset('purple')" title="Purple"></div>
+        </div>
+      </div>
+    </div>
     <div class="sets-col-header">
       <span>Set</span>
       <span>Reps</span>
@@ -589,8 +764,9 @@
 // ═══════════════════════════════════════════════════════════
 //  State
 // ═══════════════════════════════════════════════════════════
-let exercises   = [];   // [{ title, sets: [{reps, weight}] }]
+let exercises   = [];   // [{ title, rest, notes, superset, sets: [{reps, weight}] }]
 let currentSets = [{ reps: '', weight: '' }];
+let currentSuperset = null;
 let mode        = 'normal';  // 'normal' | 'reorder' | 'delete'
 let isDark      = false;
 let modalCb     = null;
@@ -646,10 +822,17 @@ function render() {
   if (!exercises.length) { list.innerHTML = ''; return; }
 
   list.innerHTML = exercises.map((ex, ei) => `
-    <div class="ex-card">
+    <div class="ex-card" ${ex.superset ? `data-superset="${ex.superset}"` : ''}>
       <div class="ex-card-title ${ex.title ? '' : 'untitled'}" onclick="toggleInsertBtn(this)">
         <span class="title-text" onclick="event.stopPropagation(); editExTitle(this, ${ei})">${ex.title ? esc(ex.title) : 'Untitled Exercise'}</span>
         <button class="insert-set-btn" onclick="event.stopPropagation(); insertSet(${ei})" title="Add set to this exercise">+</button>
+      </div>
+      <div class="ex-rest-row">
+        <label for="rest-${ei}">⏱ Rest:</label>
+        <input id="rest-${ei}" class="rest-input" type="text" inputmode="decimal"
+          value="${esc(ex.rest || '')}" placeholder="—" maxlength="6"
+          onchange="exercises[${ei}].rest=this.value; save()">
+        <span>sec</span>
       </div>
       <div class="sets-col-header">
         <span>Set</span><span>Reps</span><span>Weight</span>
@@ -665,6 +848,23 @@ function render() {
             onchange="updateSavedSet(${ei},${si},'weight',this.value)">
         </div>
       `).join('')}
+      <div class="notes-toggle" onclick="toggleNotes(this)">
+        <i class="notes-chevron">▶</i>
+        <span>Notes</span>
+      </div>
+      <div class="notes-body">
+        <textarea class="notes-textarea" placeholder="Notes…" rows="3"
+          onchange="exercises[${ei}].notes=this.value; save()">${esc(ex.notes || '')}</textarea>
+        <div class="superset-row">
+          <span class="superset-label">Superset:</span>
+          <div class="ss-swatches">
+            ${['red','orange','yellow','purple'].map(c => `
+              <div class="ss-swatch ${ex.superset === c ? 'selected' : ''}" data-color="${c}"
+                onclick="setSavedSuperset(${ei},'${c}')" title="${c}"></div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
     </div>
   `).join('');
 }
@@ -677,6 +877,55 @@ function updateSavedSet(ei, si, field, val) {
 function toggleInsertBtn(titleEl) {
   // On touch/mobile, hover doesn't apply — tap title to reveal the + button
   titleEl.classList.toggle('active-insert');
+}
+
+function toggleNotes(toggleEl) {
+  const chevron = toggleEl.querySelector('.notes-chevron');
+  const body    = toggleEl.nextElementSibling;
+  chevron.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+function toggleCurNotes() {
+  document.getElementById('cur-notes-chevron').classList.toggle('open');
+  document.getElementById('cur-notes-body').classList.toggle('open');
+}
+
+// ── Superset ─────────────────────────────────────────────
+const SS_COLORS = ['red', 'orange', 'yellow', 'purple'];
+
+function setCurSuperset(color) {
+  // Toggle off if already selected
+  currentSuperset = (currentSuperset === color) ? null : color;
+  // Update swatch selection in current-ex notes body
+  document.querySelectorAll('#cur-notes-body .ss-swatch').forEach(el => {
+    el.classList.toggle('selected', el.dataset.color === currentSuperset);
+  });
+  // Apply stripe to title input
+  const curEx = document.getElementById('current-ex');
+  if (currentSuperset) {
+    curEx.dataset.superset = currentSuperset;
+  } else {
+    delete curEx.dataset.superset;
+  }
+}
+
+function setSavedSuperset(ei, color) {
+  // Toggle off if already selected
+  exercises[ei].superset = (exercises[ei].superset === color) ? null : color;
+  save();
+  // Update DOM without full re-render: just fix the card's data-superset + swatches
+  const cards = document.querySelectorAll('.ex-card');
+  const card  = cards[ei];
+  if (!card) return;
+  if (exercises[ei].superset) {
+    card.dataset.superset = exercises[ei].superset;
+  } else {
+    delete card.dataset.superset;
+  }
+  card.querySelectorAll('.ss-swatch').forEach(el => {
+    el.classList.toggle('selected', el.dataset.color === exercises[ei].superset);
+  });
 }
 
 function editExTitle(spanEl, ei) {
@@ -833,14 +1082,26 @@ function addSet() {
 function nextExercise() {
   flushCurrentInputs();
   const title = document.getElementById('ex-title-input').value.trim();
+  const rest  = document.getElementById('cur-rest-input').value.trim();
+  const notes = document.getElementById('cur-notes-input').value.trim();
   const hasSets = currentSets.some(s => s.reps || s.weight);
   if (!title && !hasSets) return;
 
-  exercises.push({ title, sets: currentSets.map(s => ({ ...s })) });
+  exercises.push({ title, rest, notes, superset: currentSuperset, sets: currentSets.map(s => ({ ...s })) });
   save();
 
   // Reset
   document.getElementById('ex-title-input').value = '';
+  document.getElementById('cur-rest-input').value  = '';
+  document.getElementById('cur-notes-input').value = '';
+  const notesBody    = document.getElementById('cur-notes-body');
+  const noteChevron  = document.getElementById('cur-notes-chevron');
+  notesBody.classList.remove('open');
+  noteChevron.classList.remove('open');
+  currentSuperset = null;
+  const curEx = document.getElementById('current-ex');
+  delete curEx.dataset.superset;
+  document.querySelectorAll('#cur-notes-body .ss-swatch').forEach(el => el.classList.remove('selected'));
   currentSets = [{ reps: '', weight: '' }];
   render();
   renderCurrentSets();
@@ -925,6 +1186,13 @@ function promptClearAll() {
       exercises   = [];
       currentSets = [{ reps: '', weight: '' }];
       document.getElementById('ex-title-input').value = '';
+      document.getElementById('cur-rest-input').value  = '';
+      document.getElementById('cur-notes-input').value = '';
+      document.getElementById('cur-notes-body').classList.remove('open');
+      document.getElementById('cur-notes-chevron').classList.remove('open');
+      currentSuperset = null;
+      delete document.getElementById('current-ex').dataset.superset;
+      document.querySelectorAll('#cur-notes-body .ss-swatch').forEach(el => el.classList.remove('selected'));
       save();
       render();
       renderCurrentSets();
@@ -943,10 +1211,12 @@ function exportMd() {
   let md = `# Workout Log — ${date}\n\n`;
 
   const all = [...exercises];
-  const curTitle = document.getElementById('ex-title-input').value.trim();
+  const curTitle   = document.getElementById('ex-title-input').value.trim();
+  const curRest    = document.getElementById('cur-rest-input').value.trim();
+  const curNotes   = document.getElementById('cur-notes-input').value.trim();
   const curHasData = currentSets.some(s => s.reps || s.weight);
   if (curTitle || curHasData) {
-    all.push({ title: curTitle || 'Untitled', sets: currentSets });
+    all.push({ title: curTitle || 'Untitled', rest: curRest, notes: curNotes, superset: currentSuperset, sets: currentSets });
   }
 
   if (!all.length) {
@@ -954,6 +1224,9 @@ function exportMd() {
   } else {
     all.forEach(ex => {
       md += `## ${ex.title || 'Untitled Exercise'}\n\n`;
+      if (ex.rest)      md += `**Rest:** ${ex.rest} sec\n\n`;
+      if (ex.notes)     md += `**Notes:** ${ex.notes}\n\n`;
+      if (ex.superset)  md += `**Superset:** ${ex.superset}\n\n`;
       md += `| Set | Reps | Weight |\n|:---:|:----:|:------:|\n`;
       ex.sets.forEach((s, i) => {
         md += `| ${i + 1} | ${s.reps || '—'} | ${s.weight || '—'} |\n`;
@@ -1017,16 +1290,33 @@ function parseMd(text) {
     if (line.startsWith('## ')) {
       if (current) result.push(current);
       const title = line.slice(3).trim().replace(/<[^>]*>/g, '').slice(0, 200);
-      current = { title, sets: [] };
+      current = { title, rest: '', notes: '', superset: null, sets: [] };
+      continue;
+    }
+
+    if (!current) continue;
+
+    // **Rest:** 60 sec
+    const restMatch = line.match(/^\*\*Rest:\*\*\s*(\S+)/i);
+    if (restMatch) { current.rest = restMatch[1].replace(/[^0-9.]/g, '').slice(0, 6); continue; }
+
+    // **Notes:** …
+    const notesMatch = line.match(/^\*\*Notes:\*\*\s*(.*)/i);
+    if (notesMatch) { current.notes = notesMatch[1].replace(/<[^>]*>/g, '').slice(0, 1000); continue; }
+
+    // **Superset:** color
+    const ssMatch = line.match(/^\*\*Superset:\*\*\s*(\w+)/i);
+    if (ssMatch) {
+      const c = ssMatch[1].toLowerCase();
+      if (['red','orange','yellow','purple'].includes(c)) current.superset = c;
       continue;
     }
 
     // Data row: | 1 | value | value |  (skip header and separator rows)
-    if (current && line.startsWith('|')) {
+    if (line.startsWith('|')) {
       const cells = line.split('|').map(c => c.trim()).filter((_, i, a) => i > 0 && i < a.length - 1);
       if (cells.length < 3) continue;
       const setNum = cells[0];
-      // Skip the column-header row (Set / Reps / Weight) and separator (---)
       if (/^[:\-]+$/.test(setNum) || setNum.toLowerCase() === 'set') continue;
       if (!/^\d+$/.test(setNum)) continue;
 
@@ -1037,7 +1327,6 @@ function parseMd(text) {
   }
   if (current) result.push(current);
 
-  // Drop any exercises that ended up with no sets
   return result.filter(ex => ex.sets.length > 0);
 }
 
