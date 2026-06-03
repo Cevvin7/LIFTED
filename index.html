@@ -877,8 +877,8 @@ function toggleEditMode() {
 }
 
 async function goHistory() {
-  // flush and save any open session that has content
-  if (exercises.length > 0 || document.getElementById('ex-title-input').value.trim()) {
+  // flush and save any open session that has content (skip if already completed via Done)
+  if (!activeSession.completed && (exercises.length > 0 || document.getElementById('ex-title-input').value.trim())) {
     flushCurrentInputs();
     const title = document.getElementById('ex-title-input').value.trim();
     const rest  = document.getElementById('cur-rest-input').value.trim();
@@ -887,6 +887,8 @@ async function goHistory() {
     if (title || hasSets) {
       exercises.push({ title, rest, notes, superset: currentSuperset, sets: currentSets.map(s => ({...s})) });
     }
+    await saveSession();
+  } else if (activeSession.id) {
     await saveSession();
   }
   setScreen('history');
@@ -1351,6 +1353,7 @@ async function doneWorkout() {
   if (title||hasSets) { exercises.push({ title,rest,notes,superset:currentSuperset,sets:currentSets.map(s=>({...s})) }); }
   activeSession.completed=true;
   await saveSession();
+  resetCurrentEx();
   editMode = false;
   applyEditMode();
   render();
