@@ -11,713 +11,554 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="LIFTED">
   <style>
-    /* ── Theme Variables ── */
-    :root {
-      --bg:           #f2f2f7;
-      --surface:      #ffffff;
-      --surface2:     #f2f2f7;
-      --border:       #e0e0e5;
-      --text:         #1a1a1a;
-      --text-muted:   #8e8e93;
-      --blue:         #2563eb;
-      --green:        #16a34a;
-      --red:          #dc2626;
-      --header-bg:    #ffffff;
-      --header-text:  #111111;
-      --shadow:       0 1px 4px rgba(0,0,0,0.10), 0 2px 10px rgba(0,0,0,0.06);
-      --shadow-lg:    0 4px 24px rgba(0,0,0,0.14);
-    }
-    [data-theme="dark"] {
-      --bg:           #000000;
-      --surface:      #1c1c1e;
-      --surface2:     #2c2c2e;
-      --border:       #3a3a3c;
-      --text:         #f5f5f7;
-      --text-muted:   #8e8e93;
-      --header-bg:    #0a0a0a;
-      --header-text:  #ffffff;
-      --shadow:       0 1px 4px rgba(0,0,0,0.4), 0 2px 10px rgba(0,0,0,0.3);
-      --shadow-lg:    0 4px 24px rgba(0,0,0,0.5);
-    }
+/* ══ Theme ════════════════════════════════════════════════ */
+:root {
+  --bg:          #f2f2f7;
+  --surface:     #ffffff;
+  --surface2:    #f2f2f7;
+  --border:      #e0e0e5;
+  --text:        #1a1a1a;
+  --text-muted:  #8e8e93;
+  --blue:        #2563eb;
+  --green:       #16a34a;
+  --green-dark:  #166534;
+  --red:         #dc2626;
+  --gold:        #f59e0b;
+  --header-bg:   #ffffff;
+  --header-text: #111111;
+  --shadow:      0 1px 4px rgba(0,0,0,.10), 0 2px 10px rgba(0,0,0,.06);
+  --shadow-lg:   0 4px 24px rgba(0,0,0,.14);
+}
+[data-theme="dark"] {
+  --bg:          #000000;
+  --surface:     #1c1c1e;
+  --surface2:    #2c2c2e;
+  --border:      #3a3a3c;
+  --text:        #f5f5f7;
+  --text-muted:  #8e8e93;
+  --header-bg:   #0a0a0a;
+  --header-text: #ffffff;
+  --shadow:      0 1px 4px rgba(0,0,0,.4), 0 2px 10px rgba(0,0,0,.3);
+  --shadow-lg:   0 4px 24px rgba(0,0,0,.5);
+}
 
-    /* ── Reset & Base ── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* ══ Reset ════════════════════════════════════════════════ */
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100dvh;
+  max-width: 600px;
+  margin: 0 auto;
+  -webkit-tap-highlight-color: transparent;
+}
+button { font-family: inherit; cursor: pointer; }
+input, textarea { font-family: inherit; }
 
-    html { -webkit-text-size-adjust: 100%; }
+/* ══ Header ══════════════════════════════════════════════ */
+header {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--header-bg);
+  color: var(--header-text);
+  padding: 14px 20px;
+  box-shadow: 0 1px 0 rgba(0,0,0,.07);
+  text-align: center;
+}
+#app-title {
+  font-size: 1.75rem; font-weight: 900;
+  letter-spacing: 5px; color: var(--header-text);
+}
+#hdr-back {
+  position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; color: var(--header-text);
+  font-size: 1.5rem; line-height: 1; padding: 6px;
+  display: none; align-items: center; gap: 4px;
+  transition: opacity .15s;
+}
+#hdr-back:active { opacity: .5; }
+body[data-screen="session"] #hdr-back { display: flex; }
+#hdr-right {
+  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  display: flex; align-items: center; gap: 2px;
+}
+#hdr-star {
+  background: none; border: none; color: var(--text-muted);
+  font-size: 1.4rem; line-height: 1; padding: 6px;
+  display: none; transition: color .2s;
+}
+#hdr-star.active { color: var(--gold); }
+body[data-screen="session"] #hdr-star { display: block; }
+#hdr-edit {
+  background: none; border: none; color: var(--header-text);
+  font-size: 1rem; line-height: 1; padding: 6px 4px;
+  display: none; opacity: .5; cursor: pointer; transition: opacity .2s, color .2s;
+}
+#hdr-edit.active { opacity: 1; color: var(--gold); }
+body[data-screen="session"] #hdr-edit { display: block; }
+/* View-mode hides entry form and insert buttons */
+body[data-edit="false"] #current-ex { display: none !important; }
+body[data-edit="false"] .insert-set-btn { display: none !important; pointer-events: none; }
+#edit-mode-banner {
+  display: none; margin-bottom: 10px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 7px 12px;
+  font-size: .82rem; color: var(--text-muted); text-align: center;
+}
+body[data-edit="false"] #edit-mode-banner { display: block; }
+#settings-btn {
+  background: none; border: none; color: var(--header-text);
+  padding: 6px; line-height: 1; opacity: .85; transition: opacity .15s;
+}
+#settings-btn:active { opacity: .5; }
+#settings-btn svg { display: block; width: 26px; height: 26px; }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100dvh;
-      max-width: 600px;
-      margin: 0 auto;
-      -webkit-tap-highlight-color: transparent;
-    }
+/* ══ Screens ══════════════════════════════════════════════ */
+.screen { display: none; }
+.screen.active { display: block; }
 
-    button { font-family: inherit; cursor: pointer; }
-    input  { font-family: inherit; }
+/* ══ History Screen ═══════════════════════════════════════ */
+#screen-history { padding: 14px 14px 80px; display: none; flex-direction: column; gap: 14px; }
+#screen-history.active { display: flex; }
 
-    /* ── Header ── */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: var(--header-bg);
-      color: var(--header-text);
-      padding: 14px 20px;
-      box-shadow: 0 1px 0 rgba(255,255,255,0.06);
-      text-align: center;
-    }
+#new-workout-btn {
+  width: 100%; padding: 16px; border: none; border-radius: 14px;
+  background: var(--blue); color: #fff;
+  font-size: 1rem; font-weight: 700; letter-spacing: .3px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  box-shadow: var(--shadow); transition: filter .15s;
+}
+#new-workout-btn:active { filter: brightness(.88); }
 
-    #app-title {
-      font-size: 1.75rem;
-      font-weight: 900;
-      letter-spacing: 5px;
-      color: var(--header-text);
-    }
+.hist-section-label {
+  font-size: .7rem; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--text-muted);
+  padding: 0 4px; margin-top: 8px; margin-bottom: 6px;
+}
+.hist-empty {
+  text-align: center; padding: 32px 20px;
+  color: var(--text-muted); font-size: .95rem;
+  background: var(--surface); border-radius: 14px;
+  box-shadow: var(--shadow);
+}
 
-    #settings-btn {
-      position: absolute;
-      top: 50%;
-      right: 20px;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      color: var(--header-text);
-      padding: 6px;
-      line-height: 1;
-      opacity: 0.85;
-      transition: opacity .15s;
-    }
-    #settings-btn:active { opacity: 0.5; }
-    #settings-btn svg { display: block; width: 26px; height: 26px; }
+/* Session card in history */
+.sess-wrap {
+  position: relative; overflow: hidden;
+  border-radius: 14px; box-shadow: var(--shadow);
+}
+.sess-row {
+  background: var(--surface);
+  display: flex; align-items: stretch;
+  transition: transform .2s cubic-bezier(.4,0,.2,1);
+}
+.sess-card-body {
+  flex: 1; padding: 14px 16px; cursor: pointer;
+  min-width: 0;
+}
+.sess-card-body:active { opacity: .7; }
+.sess-name {
+  font-weight: 700; font-size: 1rem;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+.sess-name.untitled { color: var(--text-muted); font-style: italic; font-weight: 400; }
+.sess-meta { font-size: .78rem; color: var(--text-muted); }
+.sess-star-btn {
+  flex-shrink: 0; background: none; border: none;
+  color: var(--text-muted); font-size: 1.4rem;
+  padding: 0 10px 0 4px; transition: color .2s;
+  display: flex; align-items: center;
+}
+.sess-star-btn.active { color: var(--gold); }
+/* Inline trash — always visible */
+.sess-del-btn {
+  flex-shrink: 0; background: none; border: none;
+  color: var(--text-muted); font-size: 1.1rem;
+  padding: 0 14px 0 4px;
+  display: flex; align-items: center;
+  cursor: pointer; transition: color .15s;
+}
+.sess-del-btn:hover { color: var(--red); }
+/* Swipe-reveal — mobile only (set rows) */
 
-    /* ── Settings Overlay ── */
-    #settings-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.45);
-      z-index: 200;
-      justify-content: flex-end;
-    }
-    #settings-overlay.open { display: flex; }
+/* ══ Session Screen ═══════════════════════════════════════ */
+#screen-session { display: none; }
+#screen-session.active { display: block; }
+#session-main {
+  padding: 14px 14px 120px;
+  display: flex; flex-direction: column; gap: 12px;
+}
 
-    #settings-panel {
-      background: var(--surface);
-      width: min(88vw, 320px);
-      height: 100%;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      animation: slideInRight 0.22s cubic-bezier(0.4,0,0.2,1);
-      box-shadow: var(--shadow-lg);
-    }
-    @keyframes slideInRight {
-      from { transform: translateX(100%); }
-      to   { transform: translateX(0); }
-    }
+/* Session header card (name + date + copy btn) */
+#session-hdr-card {
+  background: var(--surface); border-radius: 14px;
+  overflow: hidden; box-shadow: var(--shadow);
+}
+#workout-name-input {
+  width: 100%; border: none;
+  background: var(--surface2); color: var(--text);
+  font-size: 1.1rem; font-weight: 700;
+  padding: 14px 16px; outline: none;
+  border-bottom: 1px solid var(--border);
+}
+#workout-name-input::placeholder { color: var(--text-muted); font-weight: 400; }
+#session-meta-row {
+  padding: 9px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: .8rem; color: var(--text-muted);
+}
+#open-copy-btn {
+  background: none; border: 1px solid var(--border); border-radius: 7px;
+  color: var(--blue); font-size: .78rem; font-weight: 600;
+  padding: 5px 10px; cursor: pointer; transition: opacity .15s;
+  display: none;
+}
+#open-copy-btn:active { opacity: .6; }
+#open-copy-btn.show { display: block; }
 
-    .settings-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 20px 16px;
-      font-weight: 700;
-      font-size: 1.15rem;
-      border-bottom: 1px solid var(--border);
-    }
-    .settings-close {
-      background: var(--surface2);
-      border: none;
-      color: var(--text-muted);
-      width: 30px; height: 30px;
-      border-radius: 50%;
-      font-size: 1rem;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .settings-close:active { opacity: 0.5; }
+/* ══ Exercise Cards ═══════════════════════════════════════ */
+.ex-card {
+  background: var(--surface); border-radius: 14px;
+  overflow: hidden; box-shadow: var(--shadow);
+}
+.ex-card-title {
+  padding: 13px 16px; font-weight: 700; font-size: 1rem;
+  background: var(--surface2); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px; color: var(--text);
+}
+.ex-card-title.untitled { color: var(--text-muted); font-weight: 400; font-style: italic; }
+.ex-card-title span.title-text { flex: 1; cursor: text; }
+.ex-card-title input.title-edit {
+  flex: 1; background: transparent; border: none;
+  border-bottom: 2px solid var(--blue); color: var(--text);
+  font-size: 1rem; font-weight: 700; font-family: inherit;
+  outline: none; padding: 0 0 2px; min-width: 0;
+}
+.insert-set-btn {
+  flex-shrink: 0; background: var(--green); color: #fff; border: none;
+  border-radius: 7px; width: 30px; height: 30px;
+  font-size: 1.2rem; font-weight: 700; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity .2s; pointer-events: none;
+}
+.ex-card:hover .insert-set-btn,
+.ex-card:focus-within .insert-set-btn { opacity: 1; pointer-events: auto; }
+.ex-card-title.active-insert .insert-set-btn { opacity: 1; pointer-events: auto; }
 
-    .settings-section {
-      padding: 18px 20px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .settings-section-label {
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 2px;
-    }
+/* Superset title colours */
+.ex-card[data-superset="red"]    .ex-card-title { background:#ef4444; color:#fff; border-color:#ef4444; }
+.ex-card[data-superset="orange"] .ex-card-title { background:#f97316; color:#fff; border-color:#f97316; }
+.ex-card[data-superset="yellow"] .ex-card-title { background:#eab308; color:#1a1a1a; border-color:#eab308; }
+.ex-card[data-superset="purple"] .ex-card-title { background:#9333ea; color:#fff; border-color:#9333ea; }
+.ex-card[data-superset] .insert-set-btn { background:rgba(0,0,0,.25); }
 
-    /* Toggle */
-    .toggle-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-weight: 500;
-    }
-    .toggle {
-      position: relative;
-      width: 50px; height: 28px;
-      flex-shrink: 0;
-    }
-    .toggle input { opacity: 0; width: 0; height: 0; }
-    .toggle-track {
-      position: absolute;
-      inset: 0;
-      background: #ccc;
-      border-radius: 14px;
-      cursor: pointer;
-      transition: background .25s;
-    }
-    .toggle-track::after {
-      content: '';
-      position: absolute;
-      width: 22px; height: 22px;
-      left: 3px; top: 3px;
-      background: #fff;
-      border-radius: 50%;
-      transition: transform .25s;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.25);
-    }
-    .toggle input:checked ~ .toggle-track { background: var(--blue); }
-    .toggle input:checked ~ .toggle-track::after { transform: translateX(22px); }
+/* ══ Rest Row ════════════════════════════════════════════ */
+.ex-rest-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 16px;
+  background: var(--surface2); border-bottom: 1px solid var(--border);
+  font-size: .85rem; color: var(--text-muted);
+}
+.ex-rest-row label { font-weight: 600; white-space: nowrap; }
+.rest-input {
+  border: none; background: transparent;
+  border-bottom: 1px solid var(--border); color: var(--text);
+  font-size: .85rem; font-family: inherit;
+  width: 52px; text-align: center; outline: none; padding: 1px 2px;
+}
+.rest-input::placeholder { color: var(--text-muted); }
 
-    /* Settings Buttons */
-    .s-btn {
-      width: 100%;
-      padding: 13px 16px;
-      border-radius: 10px;
-      border: none;
-      font-size: 0.97rem;
-      font-weight: 600;
-      text-align: left;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      transition: opacity .15s;
-    }
-    .s-btn:active { opacity: 0.6; }
-    .s-btn-outline {
-      background: var(--surface2);
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-    .s-btn-blue  { background: var(--blue);  color: #fff; }
-    .s-btn-red   { background: var(--red);   color: #fff; }
+/* ══ Notes Section ═══════════════════════════════════════ */
+.notes-toggle {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 16px; cursor: pointer;
+  font-size: .82rem; font-weight: 600; color: var(--text-muted);
+  border-top: 1px solid var(--border);
+  user-select: none; -webkit-user-select: none;
+}
+.notes-toggle:active { opacity: .6; }
+.notes-chevron {
+  display: inline-block; transition: transform .2s;
+  font-style: normal; font-size: .7rem;
+}
+.notes-chevron.open { transform: rotate(90deg); }
+.notes-body { display: none; padding: 0 16px 12px; border-top: 1px solid var(--border); }
+.notes-body.open { display: block; }
+.notes-textarea {
+  width: 100%; min-height: 90px;
+  background: transparent; border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text); font-family: inherit; font-size: .95rem;
+  line-height: 1.5; padding: 10px 12px; outline: none;
+  resize: vertical; margin-top: 10px;
+}
+.notes-textarea::placeholder { color: var(--text-muted); }
 
-    /* ── Main Content ── */
-    #main {
-      padding: 14px 14px 120px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+/* ══ Superset Swatches ═══════════════════════════════════ */
+.superset-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px 12px; flex-wrap: wrap;
+}
+.superset-label { font-size:.78rem; font-weight:700; color:var(--text-muted); letter-spacing:.4px; white-space:nowrap; }
+.ss-swatches { display:flex; gap:8px; align-items:center; }
+.ss-swatch {
+  width:26px; height:26px; border-radius:6px; border:3px solid transparent;
+  cursor:pointer; transition:transform .15s, border-color .15s; flex-shrink:0;
+}
+.ss-swatch:active { transform:scale(.88); }
+.ss-swatch.selected { border-color:var(--text); transform:scale(1.1); }
+.ss-swatch[data-color="red"]    { background:#ef4444; }
+.ss-swatch[data-color="orange"] { background:#f97316; }
+.ss-swatch[data-color="yellow"] { background:#eab308; }
+.ss-swatch[data-color="purple"] { background:#9333ea; }
 
-    /* ── Exercise Card (saved) ── */
-    .ex-card {
-      background: var(--surface);
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-    }
-    .ex-card-title {
-      padding: 13px 16px;
-      font-weight: 700;
-      font-size: 1rem;
-      background: var(--surface2);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: var(--text);
-    }
-    .ex-card-title.untitled { color: var(--text-muted); font-weight: 400; font-style: italic; }
-    .ex-card-title span.title-text {
-      flex: 1;
-      cursor: text;
-    }
-    .ex-card-title input.title-edit {
-      flex: 1;
-      background: transparent;
-      border: none;
-      border-bottom: 2px solid var(--blue);
-      color: var(--text);
-      font-size: 1rem;
-      font-weight: 700;
-      font-family: inherit;
-      outline: none;
-      padding: 0 0 2px;
-      min-width: 0;
-    }
-    .insert-set-btn {
-      flex-shrink: 0;
-      background: var(--green);
-      color: #fff;
-      border: none;
-      border-radius: 7px;
-      width: 30px; height: 30px;
-      font-size: 1.2rem;
-      font-weight: 700;
-      line-height: 1;
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0;
-      transition: opacity .2s;
-      pointer-events: none;
-    }
-    .ex-card:hover  .insert-set-btn,
-    .ex-card:focus-within .insert-set-btn { opacity: 1; pointer-events: auto; }
-    .ex-card-title.active-insert .insert-set-btn { opacity: 1; pointer-events: auto; }
+/* ══ Current-ex meta ════════════════════════════════════ */
+#cur-meta {
+  display:flex; align-items:center; gap:8px; padding:8px 16px;
+  background:var(--surface2); border-bottom:1px solid var(--border);
+  font-size:.85rem; color:var(--text-muted);
+}
+#cur-meta label { font-weight:600; white-space:nowrap; }
+#cur-notes-toggle {
+  display:flex; align-items:center; gap:8px; padding:10px 16px;
+  cursor:pointer; font-size:.82rem; font-weight:600; color:var(--text-muted);
+  border-bottom:1px solid var(--border);
+  user-select:none; -webkit-user-select:none;
+}
+#cur-notes-toggle:active { opacity:.6; }
+#cur-notes-body { display:none; padding:0 16px 12px; border-bottom:1px solid var(--border); }
+#cur-notes-body.open { display:block; }
+#current-ex[data-superset="red"]    #ex-title-input { border-left:5px solid #ef4444; }
+#current-ex[data-superset="orange"] #ex-title-input { border-left:5px solid #f97316; }
+#current-ex[data-superset="yellow"] #ex-title-input { border-left:5px solid #eab308; }
+#current-ex[data-superset="purple"] #ex-title-input { border-left:5px solid #9333ea; }
 
-    /* ── Rest Row ── */
-    .ex-rest-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      background: var(--surface2);
-      border-bottom: 1px solid var(--border);
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-    .ex-rest-row label { font-weight: 600; white-space: nowrap; }
-    .rest-input {
-      border: none;
-      background: transparent;
-      border-bottom: 1px solid var(--border);
-      color: var(--text);
-      font-size: 0.85rem;
-      font-family: inherit;
-      width: 52px;
-      text-align: center;
-      outline: none;
-      padding: 1px 2px;
-    }
-    .rest-input::placeholder { color: var(--text-muted); }
+/* ══ Sets Grid ═══════════════════════════════════════════ */
+.sets-col-header, .set-row {
+  display: grid; grid-template-columns: 20% 40% 40%;
+}
+.sets-col-header {
+  padding: 7px 16px; font-size: .7rem; font-weight: 700;
+  letter-spacing: .5px; text-transform: uppercase;
+  color: var(--text-muted); border-bottom: 1px solid var(--border);
+}
+/* Set row swipe/delete */
+.set-row-wrap {
+  position: relative; overflow: hidden;
+  border-bottom: 1px solid var(--border);
+}
+.set-row-wrap:last-child { border-bottom: none; }
+.set-row {
+  border-bottom: none !important;
+  transition: transform .2s cubic-bezier(.4,0,.2,1);
+  background: var(--surface);
+  align-items: center;
+}
+.set-num { padding:11px 16px; font-size:.85rem; font-weight:700; color:var(--text-muted); }
+.set-input {
+  border: none; background: transparent; color: var(--text);
+  font-size: 1rem; padding: 11px 12px 11px 0; width: 100%; outline: none;
+}
+.set-input::placeholder { color: var(--text-muted); }
+.set-del-btn {
+  position: absolute; right: 0; top: 0; bottom: 0; width: 56px;
+  background: var(--red); color: #fff; border: none;
+  font-size: 1.1rem; display: flex; align-items: center; justify-content: center;
+  transform: translateX(100%);
+  transition: transform .2s cubic-bezier(.4,0,.2,1);
+  cursor: pointer;
+}
+@media (hover: hover) {
+  .set-row-wrap:hover .set-del-btn { transform: translateX(0); }
+}
+.set-row-wrap.show-del .set-del-btn { transform: translateX(0); }
+.set-row-wrap.show-del .set-row     { transform: translateX(-56px); }
 
-    /* ── Notes Section ── */
-    .notes-toggle {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 16px;
-      cursor: pointer;
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      border-top: 1px solid var(--border);
-      user-select: none;
-      -webkit-user-select: none;
-    }
-    .notes-toggle:active { opacity: 0.6; }
-    .notes-chevron {
-      display: inline-block;
-      transition: transform .2s;
-      font-style: normal;
-      font-size: 0.7rem;
-    }
-    .notes-chevron.open { transform: rotate(90deg); }
-    .notes-body {
-      display: none;
-      padding: 0 16px 12px;
-      border-top: 1px solid var(--border);
-    }
-    .notes-body.open { display: block; }
-    .notes-textarea {
-      width: 100%;
-      min-height: 90px;
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      font-family: inherit;
-      font-size: 0.95rem;
-      line-height: 1.5;
-      padding: 10px 12px;
-      outline: none;
-      resize: vertical;
-      margin-top: 10px;
-    }
-    .notes-textarea::placeholder { color: var(--text-muted); }
+/* ══ Current Exercise Card ═══════════════════════════════ */
+#current-ex {
+  background: var(--surface); border-radius: 14px;
+  overflow: hidden; box-shadow: var(--shadow);
+}
+#ex-title-input {
+  width: 100%; border: none; background: var(--surface2); color: var(--text);
+  font-size: 1.05rem; font-weight: 700; padding: 14px 16px; outline: none;
+  border-bottom: 1px solid var(--border);
+}
+#ex-title-input::placeholder { color: var(--text-muted); font-weight: 400; }
+.action-row {
+  display: grid; grid-template-columns: 1fr 1fr;
+  border-top: 1px solid var(--border);
+}
+.action-btn {
+  border: none; padding: 15px; font-size: 1.1rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  transition: filter .15s;
+}
+.action-btn:active { filter: brightness(.85); }
+#btn-next { background: var(--blue); color: #fff; border-right: 1px solid rgba(255,255,255,.15); }
+#btn-add  { background: var(--green); color: #fff; }
+#btn-done {
+  width: 100%; border: none; padding: 14px;
+  background: var(--green-dark); color: #fff;
+  font-size: .95rem; font-weight: 700; letter-spacing: .5px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  cursor: pointer; border-top: 1px solid rgba(255,255,255,.1);
+  transition: filter .15s;
+}
+#btn-done:active { filter: brightness(.85); }
 
-    /* ── Current-ex meta row ── */
-    #cur-meta {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      background: var(--surface2);
-      border-bottom: 1px solid var(--border);
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-    #cur-meta label { font-weight: 600; white-space: nowrap; }
-    #cur-notes-toggle {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 16px;
-      cursor: pointer;
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      border-bottom: 1px solid var(--border);
-      user-select: none;
-      -webkit-user-select: none;
-    }
-    #cur-notes-toggle:active { opacity: 0.6; }
-    #cur-notes-body {
-      display: none;
-      padding: 0 16px 12px;
-      border-bottom: 1px solid var(--border);
-    }
-    #cur-notes-body.open { display: block; }
+/* ══ Done Card ═══════════════════════════════════════════ */
+#done-card {
+  display: none; background: var(--surface); border-radius: 14px;
+  overflow: hidden; box-shadow: var(--shadow);
+  text-align: center; padding: 24px 20px;
+  flex-direction: column; gap: 12px; align-items: center;
+}
+#done-card.show { display: flex; }
+#done-card .done-check { font-size: 2.2rem; line-height: 1; }
+#done-card p { color: var(--text-muted); font-size: .9rem; }
+#done-card button {
+  width: 100%; border: none; padding: 13px; border-radius: 10px;
+  background: var(--blue); color: #fff; font-size: 1rem; font-weight: 700;
+  cursor: pointer; transition: filter .15s;
+}
+#done-card button:active { filter: brightness(.85); }
 
-    /* ── Superset Swatches ── */
-    .superset-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 16px 12px;
-      flex-wrap: wrap;
-    }
-    .superset-label {
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      letter-spacing: 0.4px;
-      white-space: nowrap;
-    }
-    .ss-swatches { display: flex; gap: 8px; align-items: center; }
-    .ss-swatch {
-      width: 26px; height: 26px;
-      border-radius: 6px;
-      border: 3px solid transparent;
-      cursor: pointer;
-      transition: transform .15s, border-color .15s;
-      flex-shrink: 0;
-      position: relative;
-    }
-    .ss-swatch:active { transform: scale(0.88); }
-    .ss-swatch.selected {
-      border-color: var(--text);
-      transform: scale(1.1);
-    }
-    .ss-swatch[data-color="red"]    { background: #ef4444; }
-    .ss-swatch[data-color="orange"] { background: #f97316; }
-    .ss-swatch[data-color="yellow"] { background: #eab308; }
-    .ss-swatch[data-color="purple"] { background: #9333ea; }
+/* ══ Reorder / Delete Mode ═══════════════════════════════ */
+.mode-card {
+  background: var(--surface); border-radius: 12px; padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow);
+}
+.mode-card-title { flex: 1; font-weight: 600; }
+.arrow-btns { display: flex; flex-direction: column; gap: 3px; }
+.arrow-btn {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  border-radius: 6px; width: 34px; height: 30px; font-size: .75rem;
+  display: flex; align-items: center; justify-content: center; transition: opacity .15s;
+}
+.arrow-btn:disabled { opacity: .2; pointer-events: none; }
+.arrow-btn:active { opacity: .5; }
+.del-check { width: 24px; height: 24px; accent-color: var(--red); cursor: pointer; flex-shrink: 0; }
+.mode-hint { text-align: center; padding: 10px; font-size: .85rem; color: var(--text-muted); }
 
-    /* ── Title bar superset colors ── */
-    .ex-card[data-superset="red"]    .ex-card-title { background: #ef4444; color: #fff; border-color: #ef4444; }
-    .ex-card[data-superset="orange"] .ex-card-title { background: #f97316; color: #fff; border-color: #f97316; }
-    .ex-card[data-superset="yellow"] .ex-card-title { background: #eab308; color: #1a1a1a; border-color: #eab308; }
-    .ex-card[data-superset="purple"] .ex-card-title { background: #9333ea; color: #fff; border-color: #9333ea; }
+/* ══ Confirm Bar ═════════════════════════════════════════ */
+#confirm-bar {
+  display: none; position: fixed; bottom: 0; left: 0; right: 0;
+  max-width: 600px; margin: 0 auto; background: var(--surface);
+  border-top: 1px solid var(--border); padding: 12px 16px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  gap: 10px; z-index: 150; box-shadow: 0 -4px 16px rgba(0,0,0,.1);
+}
+#confirm-bar.show { display: flex; }
+.cbar-btn {
+  flex: 1; padding: 13px; border: none; border-radius: 10px;
+  font-size: 1rem; font-weight: 700; transition: opacity .15s;
+}
+.cbar-btn:active { opacity: .7; }
+#cbar-cancel  { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+#cbar-confirm { background: var(--green); color: #fff; }
+#cbar-confirm.is-delete { background: var(--red); }
 
-    /* Keep insert-btn visible on colored title bars */
-    .ex-card[data-superset] .insert-set-btn { background: rgba(0,0,0,0.25); }
+/* ══ Settings ════════════════════════════════════════════ */
+#settings-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.45); z-index: 200; justify-content: flex-end;
+}
+#settings-overlay.open { display: flex; }
+#settings-panel {
+  background: var(--surface); width: min(88vw, 320px); height: 100%;
+  overflow-y: auto; display: flex; flex-direction: column;
+  animation: slideInRight .22s cubic-bezier(.4,0,.2,1); box-shadow: var(--shadow-lg);
+}
+@keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+.settings-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 20px 16px; font-weight: 700; font-size: 1.15rem;
+  border-bottom: 1px solid var(--border);
+}
+.settings-close {
+  background: var(--surface2); border: none; color: var(--text-muted);
+  width: 30px; height: 30px; border-radius: 50%; font-size: 1rem;
+  display: flex; align-items: center; justify-content: center;
+}
+.settings-close:active { opacity: .5; }
+.settings-section {
+  padding: 18px 20px; border-bottom: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.settings-section-label {
+  font-size: .7rem; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--text-muted); margin-bottom: 2px;
+}
+.toggle-row { display: flex; align-items: center; justify-content: space-between; font-weight: 500; }
+.toggle { position: relative; width: 50px; height: 28px; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-track {
+  position: absolute; inset: 0; background: #ccc; border-radius: 14px;
+  cursor: pointer; transition: background .25s;
+}
+.toggle-track::after {
+  content: ''; position: absolute; width: 22px; height: 22px;
+  left: 3px; top: 3px; background: #fff; border-radius: 50%;
+  transition: transform .25s; box-shadow: 0 1px 4px rgba(0,0,0,.25);
+}
+.toggle input:checked ~ .toggle-track { background: var(--blue); }
+.toggle input:checked ~ .toggle-track::after { transform: translateX(22px); }
+.s-btn {
+  width: 100%; padding: 13px 16px; border-radius: 10px; border: none;
+  font-size: .97rem; font-weight: 600; text-align: left;
+  display: flex; align-items: center; gap: 10px; transition: opacity .15s;
+}
+.s-btn:active { opacity: .6; }
+.s-btn-outline { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+.s-btn-blue { background: var(--blue); color: #fff; }
+.s-btn-red  { background: var(--red);  color: #fff; }
 
-    /* Current exercise superset indicator on title input */
-    #current-ex[data-superset="red"]    #ex-title-input { border-left: 5px solid #ef4444; }
-    #current-ex[data-superset="orange"] #ex-title-input { border-left: 5px solid #f97316; }
-    #current-ex[data-superset="yellow"] #ex-title-input { border-left: 5px solid #eab308; }
-    #current-ex[data-superset="purple"] #ex-title-input { border-left: 5px solid #9333ea; }
+/* ══ Modal ═══════════════════════════════════════════════ */
+#modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.5); z-index: 400;
+  align-items: center; justify-content: center; padding: 20px;
+}
+#modal-overlay.open { display: flex; }
+.modal-box {
+  background: var(--surface); border-radius: 16px;
+  padding: 26px 22px 20px; width: 100%; max-width: 320px;
+  box-shadow: var(--shadow-lg);
+}
+.modal-box h3  { font-size: 1.1rem; margin-bottom: 10px; }
+.modal-box p   { color: var(--text-muted); line-height: 1.55; margin-bottom: 22px; font-size: .95rem; }
+.modal-btns    { display: flex; gap: 10px; flex-wrap: wrap; }
+.modal-btns button {
+  flex: 1; padding: 12px; border: none; border-radius: 10px;
+  font-size: 1rem; font-weight: 700; transition: opacity .15s; min-width: 80px;
+}
+.modal-btns button:active { opacity: .7; }
+#modal-cancel  { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+#modal-confirm { color: #fff; }
 
-    /* ── Sets Grid ── */
-    .sets-col-header, .set-row {
-      display: grid;
-      grid-template-columns: 20% 40% 40%;
-    }
-    .sets-col-header {
-      padding: 7px 16px;
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      border-bottom: 1px solid var(--border);
-    }
-    .set-row {
-      align-items: center;
-      border-bottom: 1px solid var(--border);
-    }
-    .set-row:last-child { border-bottom: none; }
-
-    /* ── Set Row Swipe / Delete ── */
-    .set-row-wrap {
-      position: relative;
-      overflow: hidden;
-      border-bottom: 1px solid var(--border);
-    }
-    .set-row-wrap:last-child { border-bottom: none; }
-    .set-row {
-      border-bottom: none !important;   /* border lives on wrap now */
-      transition: transform .2s cubic-bezier(0.4,0,0.2,1);
-      background: var(--surface);       /* keep bg solid while sliding */
-    }
-    .set-del-btn {
-      position: absolute;
-      right: 0; top: 0; bottom: 0;
-      width: 56px;
-      background: var(--red);
-      color: #fff;
-      border: none;
-      font-size: 1.1rem;
-      display: flex; align-items: center; justify-content: center;
-      transform: translateX(100%);
-      transition: transform .2s cubic-bezier(0.4,0,0.2,1);
-      cursor: pointer;
-    }
-    /* Desktop hover reveal — slides over the top, row stays still */
-    @media (hover: hover) {
-      .set-row-wrap:hover .set-del-btn  { transform: translateX(0); }
-    }
-    /* Mobile swipe reveal via JS class */
-    .set-row-wrap.show-del .set-del-btn { transform: translateX(0); }
-    .set-row-wrap.show-del .set-row     { transform: translateX(-56px); }
-
-    .set-num {
-      padding: 11px 16px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--text-muted);
-    }
-    .set-input {
-      border: none;
-      background: transparent;
-      color: var(--text);
-      font-size: 1rem;
-      padding: 11px 12px 11px 0;
-      width: 100%;
-      outline: none;
-    }
-    .set-input::placeholder { color: var(--text-muted); }
-
-    /* ── Current Exercise ── */
-    #current-ex {
-      background: var(--surface);
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-    }
-    #ex-title-input {
-      width: 100%;
-      border: none;
-      background: var(--surface2);
-      color: var(--text);
-      font-size: 1.05rem;
-      font-weight: 700;
-      padding: 14px 16px;
-      outline: none;
-      border-bottom: 1px solid var(--border);
-    }
-    #ex-title-input::placeholder { color: var(--text-muted); font-weight: 400; }
-
-    /* ── Action Buttons ── */
-    .action-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      border-top: 1px solid var(--border);
-    }
-    .action-btn {
-      border: none;
-      padding: 15px;
-      font-size: 1.1rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: filter .15s;
-    }
-    .action-btn:active { filter: brightness(0.85); }
-    #btn-next {
-      background: var(--blue);
-      color: #fff;
-      border-right: 1px solid rgba(255,255,255,0.15);
-    }
-    #btn-add {
-      background: var(--green);
-      color: #fff;
-    }
-    .btn-icon { font-size: 1.3rem; line-height: 1; }
-
-    /* ── Done Button ── */
-    #btn-done {
-      width: 100%;
-      border: none;
-      padding: 14px;
-      background: #166534;   /* deeper green to distinguish from Add Set */
-      color: #fff;
-      font-size: 0.95rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      display: flex; align-items: center; justify-content: center;
-      gap: 8px;
-      cursor: pointer;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      transition: filter .15s;
-    }
-    #btn-done:active { filter: brightness(0.85); }
-
-    /* ── Done Card (shown after Done is pressed) ── */
-    #done-card {
-      display: none;
-      background: var(--surface);
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-      text-align: center;
-      padding: 24px 20px;
-      flex-direction: column;
-      gap: 12px;
-      align-items: center;
-    }
-    #done-card.show { display: flex; }
-    #done-card .done-check {
-      font-size: 2.2rem;
-      line-height: 1;
-    }
-    #done-card p {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-    }
-    #done-card button {
-      width: 100%;
-      border: none;
-      padding: 13px;
-      border-radius: 10px;
-      background: var(--blue);
-      color: #fff;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: filter .15s;
-    }
-    #done-card button:active { filter: brightness(0.85); }
-
-    /* ── Reorder / Delete Mode Cards ── */
-    .mode-card {
-      background: var(--surface);
-      border-radius: 12px;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      box-shadow: var(--shadow);
-    }
-    .mode-card-title { flex: 1; font-weight: 600; }
-    .arrow-btns { display: flex; flex-direction: column; gap: 3px; }
-    .arrow-btn {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: 6px;
-      width: 34px; height: 30px;
-      font-size: 0.75rem;
-      display: flex; align-items: center; justify-content: center;
-      transition: opacity .15s;
-    }
-    .arrow-btn:disabled { opacity: 0.2; pointer-events: none; }
-    .arrow-btn:active { opacity: 0.5; }
-    .del-check {
-      width: 24px; height: 24px;
-      accent-color: var(--red);
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-    .mode-hint {
-      text-align: center;
-      padding: 10px;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    /* ── Confirm Bar ── */
-    #confirm-bar {
-      display: none;
-      position: fixed;
-      bottom: 0;
-      left: 0; right: 0;
-      max-width: 600px;
-      margin: 0 auto;
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      padding: 12px 16px;
-      padding-bottom: max(12px, env(safe-area-inset-bottom));
-      gap: 10px;
-      z-index: 150;
-      box-shadow: 0 -4px 16px rgba(0,0,0,0.1);
-    }
-    #confirm-bar.show { display: flex; }
-    .cbar-btn {
-      flex: 1;
-      padding: 13px;
-      border: none;
-      border-radius: 10px;
-      font-size: 1rem;
-      font-weight: 700;
-      transition: opacity .15s;
-    }
-    .cbar-btn:active { opacity: 0.7; }
-    #cbar-cancel { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
-    #cbar-confirm { background: var(--green); color: #fff; }
-    #cbar-confirm.is-delete { background: var(--red); }
-
-    /* ── Modal ── */
-    #modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      z-index: 400;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    #modal-overlay.open { display: flex; }
-    .modal-box {
-      background: var(--surface);
-      border-radius: 16px;
-      padding: 26px 22px 20px;
-      width: 100%;
-      max-width: 320px;
-      box-shadow: var(--shadow-lg);
-    }
-    .modal-box h3 { font-size: 1.1rem; margin-bottom: 10px; }
-    .modal-box p  { color: var(--text-muted); line-height: 1.55; margin-bottom: 22px; font-size: 0.95rem; }
-    .modal-btns   { display: flex; gap: 10px; }
-    .modal-btns button {
-      flex: 1;
-      padding: 12px;
-      border: none;
-      border-radius: 10px;
-      font-size: 1rem;
-      font-weight: 700;
-      transition: opacity .15s;
-    }
-    .modal-btns button:active { opacity: 0.7; }
-    #modal-cancel  { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
-    #modal-confirm { color: #fff; }
+/* Export format buttons */
+.export-btn {
+  width: 100%; padding: 14px 16px; border: 2px solid var(--border);
+  border-radius: 10px; background: var(--surface2); color: var(--text);
+  font-size: .97rem; font-weight: 700; cursor: pointer;
+  transition: border-color .15s, background .15s;
+  text-align: center;
+}
+.export-btn:active { opacity: .7; }
+.export-btn:hover  { border-color: var(--blue); background: var(--surface); }
   </style>
 </head>
-<body>
+<body data-screen="history">
 
-<!-- ══ Settings Overlay ══════════════════════════════════════════ -->
+<!-- ══ Settings ════════════════════════════════════════════ -->
 <div id="settings-overlay">
   <div id="settings-panel">
     <div class="settings-header">
       <span>Settings</span>
       <button class="settings-close" onclick="closeSettings()">✕</button>
     </div>
-
-    <!-- Appearance -->
     <div class="settings-section">
       <div class="settings-section-label">Appearance</div>
       <div class="toggle-row">
@@ -728,169 +569,245 @@
         </label>
       </div>
     </div>
-
-    <!-- Manage -->
-    <div class="settings-section">
-      <div class="settings-section-label">Manage</div>
+    <div class="settings-section" id="session-manage-section">
+      <div class="settings-section-label">Current Session</div>
       <button class="s-btn s-btn-outline" onclick="startReorder()">
         <span>↕</span> Reorder Exercises
       </button>
       <button class="s-btn s-btn-outline" onclick="startDelete()">
         <span>🗑</span> Delete Exercises
       </button>
+      <button class="s-btn s-btn-red" onclick="promptClearSession()">
+        <span>✕</span> Clear Session
+      </button>
     </div>
-
-    <!-- Danger / Export -->
     <div class="settings-section">
       <div class="settings-section-label">Data</div>
-      <button class="s-btn s-btn-red" onclick="promptClearAll()">
-        <span>✕</span> Clear All &amp; Start Over
-      </button>
-            <button class="s-btn s-btn-outline" onclick="triggerImport()">
+      <button class="s-btn s-btn-outline" onclick="triggerImport()">
         <span>↑</span> Import .md
       </button>
       <input id="import-file" type="file" accept=".md,text/markdown" style="display:none" onchange="handleImport(this)">
-      <button class="s-btn s-btn-blue" onclick="exportMd()">
-        <span>↓</span> Export as .md
+      <button class="s-btn s-btn-blue" onclick="openExportModal()">
+        <span>↓</span> Export Workout
       </button>
     </div>
-
-    <!-- Ko-fi -->
-    <div class="settings-section" style="margin-top: auto;">
+    <div class="settings-section" style="margin-top:auto">
       <div class="settings-section-label">Support</div>
-      <a href="https://ko-fi.com/cevvin" target="_blank" rel="noopener" class="s-btn" style="background:#FF5E5B; color:#fff; text-decoration:none; justify-content:center; text-align:center;">
+      <a href="https://ko-fi.com/cevvin" target="_blank" rel="noopener" class="s-btn"
+         style="background:#FF5E5B;color:#fff;text-decoration:none;justify-content:center;text-align:center;">
         ☕ Buy me a coffee
       </a>
     </div>
   </div>
 </div>
 
-<!-- ══ Confirm Modal ═════════════════════════════════════════════ -->
+<!-- ══ Modal ════════════════════════════════════════════════ -->
 <div id="modal-overlay">
   <div class="modal-box" onclick="event.stopPropagation()">
     <h3 id="modal-title"></h3>
     <p  id="modal-body"></p>
-    <div class="modal-btns">
+    <div class="modal-btns" id="modal-btns">
       <button id="modal-cancel"  onclick="closeModal()">Cancel</button>
       <button id="modal-confirm" onclick="runModalConfirm()"></button>
     </div>
   </div>
 </div>
 
-<!-- ══ Confirm / Cancel Bar (reorder & delete modes) ════════════ -->
+<!-- ══ Confirm Bar ══════════════════════════════════════════ -->
 <div id="confirm-bar">
   <button id="cbar-cancel"  class="cbar-btn" onclick="cancelMode()">Cancel</button>
   <button id="cbar-confirm" class="cbar-btn" onclick="confirmMode()">Confirm</button>
 </div>
 
-<!-- ══ Header ════════════════════════════════════════════════════ -->
+<!-- ══ Header ═══════════════════════════════════════════════ -->
 <header>
+  <button id="hdr-back" onclick="goHistory()">&#8592;</button>
   <span id="app-title">L I F T E D</span>
-  <button id="settings-btn" onclick="openSettings()" aria-label="Settings">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="12" cy="12" r="3"/>
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-    </svg>
-  </button>
-</header>
-
-<!-- ══ Main ══════════════════════════════════════════════════════ -->
-<div id="main">
-  <!-- Saved exercises rendered here -->
-  <div id="ex-list"></div>
-
-  <!-- Active exercise entry -->
-  <div id="current-ex">
-    <input id="ex-title-input" type="text" placeholder="Exercise Title" autocomplete="off" autocorrect="off" spellcheck="false">
-    <div id="cur-meta">
-      <label for="cur-rest-input">⏱ Rest:</label>
-      <input id="cur-rest-input" class="rest-input" type="text" inputmode="decimal" placeholder="—" maxlength="6">
-      <span style="font-size:0.82rem">sec</span>
-    </div>
-    <div id="cur-notes-toggle" onclick="toggleCurNotes()">
-      <i class="notes-chevron" id="cur-notes-chevron">▶</i>
-      <span>Notes</span>
-    </div>
-    <div id="cur-notes-body">
-      <textarea id="cur-notes-input" class="notes-textarea" placeholder="Notes…" rows="3"></textarea>
-      <div class="superset-row">
-        <span class="superset-label">Superset:</span>
-        <div class="ss-swatches">
-          <div class="ss-swatch" data-color="red"    onclick="setCurSuperset('red')"   title="Red"></div>
-          <div class="ss-swatch" data-color="orange" onclick="setCurSuperset('orange')" title="Orange"></div>
-          <div class="ss-swatch" data-color="yellow" onclick="setCurSuperset('yellow')" title="Yellow"></div>
-          <div class="ss-swatch" data-color="purple" onclick="setCurSuperset('purple')" title="Purple"></div>
-        </div>
-      </div>
-    </div>
-    <div class="sets-col-header">
-      <span>Set</span>
-      <span>Reps</span>
-      <span>Weight</span>
-    </div>
-    <div id="current-sets"></div>
-    <div class="action-row">
-      <button id="btn-next" class="action-btn" onclick="nextExercise()" title="Next Exercise">
-        <!-- Arrow-right with line -->
-        <svg width="22" height="18" viewBox="0 0 22 18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="20" y1="1" x2="20" y2="17"/>
-          <line x1="1"  y1="9" x2="17" y2="9"/>
-          <polyline points="11,3 17,9 11,15"/>
-        </svg>
-        <span style="font-size:0.85rem; font-weight:700; letter-spacing:0.5px">NEXT</span>
-      </button>
-      <button id="btn-add"  class="action-btn" onclick="addSet()" title="Add Set">
-        <span class="btn-icon">+</span>
-        <span style="font-size:0.85rem; font-weight:700; letter-spacing:0.5px">ADD SET</span>
-      </button>
-    </div>
-    <button id="btn-done" onclick="doneWorkout()">
-      ✓ &nbsp;DONE
+  <div id="hdr-right">
+    <button id="hdr-star" onclick="toggleSessionFavorite()" title="Favorite">☆</button>
+    <button id="hdr-edit" onclick="toggleEditMode()" title="Toggle Edit Mode">✏</button>
+    <button id="settings-btn" onclick="openSettings()" aria-label="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l-.06.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
     </button>
   </div>
+</header>
 
-  <!-- Shown after Done is pressed -->
-  <div id="done-card">
-    <div class="done-check">✓</div>
-    <p>Workout saved. Ready to export, edit, or keep going.</p>
-    <button onclick="resumeWorkout()">＋ Add Another Exercise</button>
+<!-- ══ History Screen ════════════════════════════════════════ -->
+<div id="screen-history" class="screen active">
+  <button id="new-workout-btn" onclick="newWorkout()">＋ New Workout</button>
+  <div id="favorites-section"></div>
+  <div id="history-section"></div>
+</div>
+
+<!-- ══ Session Screen ════════════════════════════════════════ -->
+<div id="screen-session" class="screen">
+  <div id="session-main">
+    <!-- Workout name + date -->
+    <div id="session-hdr-card">
+      <input id="workout-name-input" type="text" placeholder="Workout Name (e.g. Push Day)"
+             autocomplete="off" spellcheck="false" oninput="onWorkoutNameChange()">
+      <div id="session-meta-row">
+        <span id="session-date-text"></span>
+        <button id="open-copy-btn" onclick="openAsCopy()">Open as Copy</button>
+      </div>
+    </div>
+
+    <!-- Saved exercises -->
+    <div id="edit-mode-banner">👁 View mode — tap ✏ to edit</div>
+    <div id="ex-list"></div>
+
+    <!-- Active exercise entry -->
+    <div id="current-ex">
+      <input id="ex-title-input" type="text" placeholder="Exercise Title"
+             autocomplete="off" autocorrect="off" spellcheck="false">
+      <div id="cur-meta">
+        <label for="cur-rest-input">⏱ Rest:</label>
+        <input id="cur-rest-input" class="rest-input" type="text" inputmode="decimal" placeholder="—" maxlength="6"
+               onchange="syncCurrentExRest(this.value)">
+        <span style="font-size:.82rem">sec</span>
+      </div>
+      <div id="cur-notes-toggle" onclick="toggleCurNotes()">
+        <i class="notes-chevron" id="cur-notes-chevron">▶</i>
+        <span>Notes</span>
+      </div>
+      <div id="cur-notes-body">
+        <textarea id="cur-notes-input" class="notes-textarea" placeholder="Notes…" rows="3"></textarea>
+        <div class="superset-row">
+          <span class="superset-label">Superset:</span>
+          <div class="ss-swatches">
+            <div class="ss-swatch" data-color="red"    onclick="setCurSuperset('red')"   title="Red"></div>
+            <div class="ss-swatch" data-color="orange" onclick="setCurSuperset('orange')" title="Orange"></div>
+            <div class="ss-swatch" data-color="yellow" onclick="setCurSuperset('yellow')" title="Yellow"></div>
+            <div class="ss-swatch" data-color="purple" onclick="setCurSuperset('purple')" title="Purple"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sets-col-header">
+        <span>Set</span><span>Reps</span><span>Weight</span>
+      </div>
+      <div id="current-sets"></div>
+      <div class="action-row">
+        <button id="btn-next" class="action-btn" onclick="nextExercise()" title="Next Exercise">
+          <svg width="22" height="18" viewBox="0 0 22 18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="20" y1="1" x2="20" y2="17"/>
+            <line x1="1"  y1="9" x2="17" y2="9"/>
+            <polyline points="11,3 17,9 11,15"/>
+          </svg>
+          <span style="font-size:.85rem;font-weight:700;letter-spacing:.5px">NEXT</span>
+        </button>
+        <button id="btn-add" class="action-btn" onclick="addSet()" title="Add Set">
+          <span style="font-size:1.3rem;line-height:1">+</span>
+          <span style="font-size:.85rem;font-weight:700;letter-spacing:.5px">ADD SET</span>
+        </button>
+      </div>
+      <button id="btn-done" onclick="doneWorkout()">✓ &nbsp;DONE</button>
+    </div>
+
+    <!-- Shown after Done -->
+    <div id="done-card">
+      <div class="done-check">✓</div>
+      <p>Workout saved. Ready to export, edit, or keep going.</p>
+      <button onclick="resumeWorkout()">＋ Add Another Exercise</button>
+    </div>
   </div>
 </div>
 
 <script>
 // ═══════════════════════════════════════════════════════════
+//  IndexedDB
+// ═══════════════════════════════════════════════════════════
+const DB_NAME = 'lifted-db', DB_VER = 1;
+let db = null;
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VER);
+    req.onupgradeneeded = e => {
+      const d = e.target.result;
+      if (!d.objectStoreNames.contains('sessions')) {
+        d.createObjectStore('sessions', { keyPath: 'id', autoIncrement: true })
+         .createIndex('date', 'date');
+      }
+      if (!d.objectStoreNames.contains('settings')) {
+        d.createObjectStore('settings', { keyPath: 'key' });
+      }
+    };
+    req.onsuccess = e => resolve(e.target.result);
+    req.onerror   = e => reject(e.target.error);
+  });
+}
+function dbGetAll(store) {
+  return new Promise((res, rej) => {
+    const r = db.transaction(store,'readonly').objectStore(store).getAll();
+    r.onsuccess = () => res(r.result);
+    r.onerror   = () => rej(r.error);
+  });
+}
+function dbPut(store, val) {
+  return new Promise((res, rej) => {
+    const r = db.transaction(store,'readwrite').objectStore(store).put(val);
+    r.onsuccess = () => res(r.result);
+    r.onerror   = () => rej(r.error);
+  });
+}
+function dbDelete(store, key) {
+  return new Promise((res, rej) => {
+    const r = db.transaction(store,'readwrite').objectStore(store).delete(key);
+    r.onsuccess = () => res();
+    r.onerror   = () => rej(r.error);
+  });
+}
+function dbGet(store, key) {
+  return new Promise((res, rej) => {
+    const r = db.transaction(store,'readonly').objectStore(store).get(key);
+    r.onsuccess = () => res(r.result);
+    r.onerror   = () => rej(r.error);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
 //  State
 // ═══════════════════════════════════════════════════════════
-let exercises   = [];   // [{ title, rest, notes, superset, sets: [{reps, weight}] }]
-let currentSets = [{ reps: '', weight: '' }];
+let exercises       = [];
+let currentSets     = [{ reps:'', weight:'' }];
 let currentSuperset = null;
-let mode        = 'normal';  // 'normal' | 'reorder' | 'delete'
-let isDark      = false;
-let modalCb     = null;
+let mode            = 'normal';
+let isDark          = false;
+let editMode        = true;
+let modalCb         = null;
+let importPending   = null;
+
+// Active session metadata
+let activeSession = { id: null, name: '', date: null, isFavorite: false, completed: false };
 
 // ═══════════════════════════════════════════════════════════
 //  Init
 // ═══════════════════════════════════════════════════════════
-function init() {
-  load();
-  render();
-  renderCurrentSets();
+async function init() {
+  db = await openDB();
+  await migrateLocalStorage();
+  const settingsDark = await dbGet('settings', 'isDark');
+  if (settingsDark) applyDark(settingsDark.value);
+  goHistory();
 }
 
-function load() {
+async function migrateLocalStorage() {
+  const raw = localStorage.getItem('lifted');
+  if (!raw) return;
   try {
-    const raw = localStorage.getItem('lifted');
-    if (raw) {
-      const d = JSON.parse(raw);
-      exercises = d.exercises || [];
-      isDark    = !!d.isDark;
+    const d = JSON.parse(raw);
+    if (d.exercises && d.exercises.length > 0) {
+      await dbPut('sessions', {
+        name: 'Imported Workout', date: new Date().toISOString(),
+        isFavorite: false, completed: true, exercises: d.exercises
+      });
     }
-  } catch (_) {}
-  applyDark(isDark);
-}
-
-function save() {
-  try { localStorage.setItem('lifted', JSON.stringify({ exercises, isDark })); } catch (_) {}
+    if (d.isDark !== undefined) await dbPut('settings', { key:'isDark', value: d.isDark });
+    localStorage.removeItem('lifted');
+  } catch(_) {}
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -901,43 +818,252 @@ function applyDark(on) {
   document.documentElement.setAttribute('data-theme', on ? 'dark' : '');
   document.getElementById('dark-toggle').checked = on;
 }
-
 function toggleDark() {
   applyDark(document.getElementById('dark-toggle').checked);
+  dbPut('settings', { key:'isDark', value: isDark });
+}
+
+// ═══════════════════════════════════════════════════════════
+//  Save session
+// ═══════════════════════════════════════════════════════════
+async function saveSession() {
+  if (!activeSession.date) activeSession.date = new Date().toISOString();
+  const data = {
+    name: activeSession.name,
+    date: activeSession.date,
+    isFavorite: activeSession.isFavorite,
+    completed: activeSession.completed,
+    exercises
+  };
+  if (activeSession.id) data.id = activeSession.id;
+  const id = await dbPut('sessions', data);
+  if (!activeSession.id) activeSession.id = id;
+}
+
+// debounced auto-save
+let saveTimer = null;
+function save() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => saveSession(), 400);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  Screen navigation
+// ═══════════════════════════════════════════════════════════
+function setScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  document.body.dataset.screen = name;
+}
+
+function applyEditMode() {
+  document.body.dataset.edit = editMode ? 'true' : 'false';
+  const btn = document.getElementById('hdr-edit');
+  if (btn) {
+    btn.classList.toggle('active', editMode);
+    btn.title = editMode ? 'View Mode (hide entry form)' : 'Edit Mode (show entry form)';
+  }
+}
+
+function toggleEditMode() {
+  editMode = !editMode;
+  if (!editMode) {
+    saveSession();
+    render();
+  } else {
+    document.getElementById('done-card').classList.remove('show');
+  }
+  applyEditMode();
+}
+
+async function goHistory() {
+  // flush and save any open session that has content
+  if (exercises.length > 0 || document.getElementById('ex-title-input').value.trim()) {
+    flushCurrentInputs();
+    const title = document.getElementById('ex-title-input').value.trim();
+    const rest  = document.getElementById('cur-rest-input').value.trim();
+    const notes = document.getElementById('cur-notes-input').value.trim();
+    const hasSets = currentSets.some(s => s.reps || s.weight);
+    if (title || hasSets) {
+      exercises.push({ title, rest, notes, superset: currentSuperset, sets: currentSets.map(s => ({...s})) });
+    }
+    await saveSession();
+  }
+  setScreen('history');
+  await renderHistory();
+}
+
+async function newWorkout() {
+  activeSession = { id: null, name: '', date: null, isFavorite: false, completed: false };
+  exercises     = [];
+  editMode      = true;
+  resetCurrentEx();
+  openSessionScreen();
+}
+
+async function openSession(id) {
+  const sess = await dbGet('sessions', id);
+  if (!sess) return;
+  activeSession = { id: sess.id, name: sess.name || '', date: sess.date, isFavorite: sess.isFavorite, completed: sess.completed };
+  exercises     = sess.exercises || [];
+  editMode      = !sess.completed;
+  resetCurrentEx();
+  openSessionScreen();
+}
+
+function openSessionScreen() {
+  setScreen('session');
+  document.getElementById('workout-name-input').value = activeSession.name;
+  const dateEl = document.getElementById('session-date-text');
+  dateEl.textContent = activeSession.date
+    ? new Date(activeSession.date).toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric' })
+    : 'New workout';
+  const copyBtn = document.getElementById('open-copy-btn');
+  copyBtn.classList.toggle('show', !!activeSession.id);
+  // star
+  const star = document.getElementById('hdr-star');
+  star.textContent  = activeSession.isFavorite ? '★' : '☆';
+  star.classList.toggle('active', activeSession.isFavorite);
+  // edit mode
+  applyEditMode();
+  // hide done-card; if in edit mode show entry form
+  document.getElementById('done-card').classList.remove('show');
+  if (editMode) document.getElementById('current-ex').style.display = '';
+  render();
+  renderCurrentSets();
+}
+
+function onWorkoutNameChange() {
+  activeSession.name = document.getElementById('workout-name-input').value;
   save();
 }
 
 // ═══════════════════════════════════════════════════════════
-//  Render Saved Exercises
+//  History rendering
+// ═══════════════════════════════════════════════════════════
+async function renderHistory() {
+  const all = await dbGetAll('sessions');
+  all.sort((a,b) => new Date(b.date) - new Date(a.date));
+  const favs    = all.filter(s => s.isFavorite);
+  const recents = all.filter(s => !s.isFavorite);
+
+  const favEl  = document.getElementById('favorites-section');
+  const recEl  = document.getElementById('history-section');
+
+  favEl.innerHTML = '';
+  recEl.innerHTML = '';
+
+  if (favs.length) {
+    favEl.innerHTML = '<div class="hist-section-label">⭐ Favorites</div>';
+    favs.forEach(s => favEl.appendChild(buildSessCard(s)));
+  }
+
+  if (recents.length) {
+    recEl.innerHTML = '<div class="hist-section-label">Recent</div>';
+    recents.forEach(s => recEl.appendChild(buildSessCard(s)));
+  }
+
+  if (!all.length) {
+    recEl.innerHTML = '<div class="hist-empty">No workouts yet.<br>Tap <strong>New Workout</strong> to get started.</div>';
+  }
+}
+
+function buildSessCard(sess) {
+  const wrap = document.createElement('div');
+  wrap.className = 'sess-wrap';
+  wrap.dataset.id = sess.id;
+  const exCount = (sess.exercises || []).length;
+  const dateStr = sess.date
+    ? new Date(sess.date).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' })
+    : '';
+  const name = sess.name || '';
+  wrap.innerHTML = `
+    <div class="sess-row">
+      <div class="sess-card-body" onclick="openSession(${sess.id})">
+        <div class="sess-name ${name ? '' : 'untitled'}">${name ? esc(name) : 'Untitled Workout'}</div>
+        <div class="sess-meta">${dateStr}${exCount ? ' &nbsp;·&nbsp; ' + exCount + ' exercise' + (exCount !== 1 ? 's':'') : ''}</div>
+      </div>
+      <button class="sess-star-btn ${sess.isFavorite ? 'active':''}"
+              onclick="event.stopPropagation(); toggleFav(${sess.id}, this)"
+              title="Favorite">${sess.isFavorite ? '★':'☆'}</button>
+      <button class="sess-del-btn"
+              onclick="event.stopPropagation(); deleteSession(${sess.id})"
+              title="Delete">🗑</button>
+    </div>
+  `;
+  return wrap;
+}
+
+async function toggleFav(id, btn) {
+  const sess = await dbGet('sessions', id);
+  if (!sess) return;
+  sess.isFavorite = !sess.isFavorite;
+  await dbPut('sessions', sess);
+  // Update button in place
+  if (btn) {
+    btn.classList.toggle('active', sess.isFavorite);
+    btn.textContent = sess.isFavorite ? '★' : '☆';
+    // Move card between sections
+    await renderHistory();
+  }
+}
+
+async function deleteSession(id) {
+  showModal('Delete Workout?', 'This workout will be permanently deleted.', 'Delete', 'var(--red)', async () => {
+    await dbDelete('sessions', id);
+    await renderHistory();
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+//  Session favorite toggle (header star)
+// ═══════════════════════════════════════════════════════════
+async function toggleSessionFavorite() {
+  activeSession.isFavorite = !activeSession.isFavorite;
+  await saveSession();
+  const star = document.getElementById('hdr-star');
+  star.textContent = activeSession.isFavorite ? '★' : '☆';
+  star.classList.toggle('active', activeSession.isFavorite);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  Open As Copy
+// ═══════════════════════════════════════════════════════════
+function openAsCopy() {
+  const copiedExercises = JSON.parse(JSON.stringify(exercises));
+  activeSession = { id: null, name: activeSession.name ? 'Copy of ' + activeSession.name : '', date: null, isFavorite: false, completed: false };
+  exercises     = copiedExercises;
+  resetCurrentEx();
+  openSessionScreen();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  Render saved exercises (within session)
 // ═══════════════════════════════════════════════════════════
 function render() {
   const list = document.getElementById('ex-list');
-
   if (mode === 'reorder') { renderReorder(list); return; }
   if (mode === 'delete')  { renderDelete(list);  return; }
-
-  if (!exercises.length) { list.innerHTML = ''; return; }
+  if (!exercises.length)  { list.innerHTML = ''; return; }
 
   list.innerHTML = exercises.map((ex, ei) => `
     <div class="ex-card" ${ex.superset ? `data-superset="${ex.superset}"` : ''}>
-      <div class="ex-card-title ${ex.title ? '' : 'untitled'}" onclick="toggleInsertBtn(this)">
-        <span class="title-text" onclick="event.stopPropagation(); editExTitle(this, ${ei})">${ex.title ? esc(ex.title) : 'Untitled Exercise'}</span>
-        <button class="insert-set-btn" onclick="event.stopPropagation(); insertSet(${ei})" title="Add set to this exercise">+</button>
+      <div class="ex-card-title ${ex.title?'':'untitled'}" onclick="toggleInsertBtn(this)">
+        <span class="title-text" onclick="event.stopPropagation();editExTitle(this,${ei})">${ex.title ? esc(ex.title) : 'Untitled Exercise'}</span>
+        <button class="insert-set-btn" onclick="event.stopPropagation();insertSet(${ei})" title="Add set">+</button>
       </div>
       <div class="ex-rest-row">
         <label for="rest-${ei}">⏱ Rest:</label>
         <input id="rest-${ei}" class="rest-input" type="text" inputmode="decimal"
-          value="${esc(ex.rest || '')}" placeholder="—" maxlength="6"
-          onchange="exercises[${ei}].rest=this.value; save()">
+          value="${esc(ex.rest||'')}" placeholder="—" maxlength="6"
+          onchange="syncSupersetRest(${ei}, this.value)">
         <span>sec</span>
       </div>
-      <div class="sets-col-header">
-        <span>Set</span><span>Reps</span><span>Weight</span>
-      </div>
-      ${ex.sets.map((s, si) => `
+      <div class="sets-col-header"><span>Set</span><span>Reps</span><span>Weight</span></div>
+      ${ex.sets.map((s,si) => `
         <div class="set-row-wrap">
           <div class="set-row">
-            <div class="set-num">${si + 1}</div>
+            <div class="set-num">${si+1}</div>
             <input class="set-input" type="text" inputmode="decimal"
               value="${esc(s.reps)}" placeholder="—"
               onchange="updateSavedSet(${ei},${si},'reps',this.value)">
@@ -949,17 +1075,16 @@ function render() {
         </div>
       `).join('')}
       <div class="notes-toggle" onclick="toggleNotes(this)">
-        <i class="notes-chevron">▶</i>
-        <span>Notes</span>
+        <i class="notes-chevron">▶</i><span>Notes</span>
       </div>
       <div class="notes-body">
         <textarea class="notes-textarea" placeholder="Notes…" rows="3"
-          onchange="exercises[${ei}].notes=this.value; save()">${esc(ex.notes || '')}</textarea>
+          onchange="exercises[${ei}].notes=this.value;save()">${esc(ex.notes||'')}</textarea>
         <div class="superset-row">
           <span class="superset-label">Superset:</span>
           <div class="ss-swatches">
-            ${['red','orange','yellow','purple'].map(c => `
-              <div class="ss-swatch ${ex.superset === c ? 'selected' : ''}" data-color="${c}"
+            ${['red','orange','yellow','purple'].map(c=>`
+              <div class="ss-swatch ${ex.superset===c?'selected':''}" data-color="${c}"
                 onclick="setSavedSuperset(${ei},'${c}')" title="${c}"></div>
             `).join('')}
           </div>
@@ -967,507 +1092,421 @@ function render() {
       </div>
     </div>
   `).join('');
-  // attach swipe handlers to every card's sets
-  document.querySelectorAll('.ex-card').forEach((card, ei) => {
-    attachSwipeHandlers(card);
-  });
+
+  document.querySelectorAll('.ex-card').forEach(card => attachSwipeHandlers(card));
 }
 
-function updateSavedSet(ei, si, field, val) {
-  exercises[ei].sets[si][field] = val;
+function updateSavedSet(ei, si, field, val) { exercises[ei].sets[si][field] = val; save(); }
+
+// Sync rest time across all exercises sharing the same superset color
+function syncSupersetRest(ei, val) {
+  exercises[ei].rest = val;
+  const color = exercises[ei].superset;
+  if (color) {
+    exercises.forEach((ex, i) => {
+      if (ex.superset === color) {
+        ex.rest = val;
+        const inp = document.getElementById('rest-' + i);
+        if (inp) inp.value = val;
+      }
+    });
+  }
   save();
 }
 
-function toggleInsertBtn(titleEl) {
-  // On touch/mobile, hover doesn't apply — tap title to reveal the + button
-  titleEl.classList.toggle('active-insert');
+// Sync rest from the current (unsaved) exercise entry to all saved exercises with the same superset color
+function syncCurrentExRest(val) {
+  if (!currentSuperset) return;
+  exercises.forEach((ex, i) => {
+    if (ex.superset === currentSuperset) {
+      ex.rest = val;
+      const inp = document.getElementById('rest-' + i);
+      if (inp) inp.value = val;
+    }
+  });
+  save();
 }
-
-function toggleNotes(toggleEl) {
-  const chevron = toggleEl.querySelector('.notes-chevron');
-  const body    = toggleEl.nextElementSibling;
-  chevron.classList.toggle('open');
-  body.classList.toggle('open');
+function toggleInsertBtn(el) { el.classList.toggle('active-insert'); }
+function toggleNotes(el) {
+  el.querySelector('.notes-chevron').classList.toggle('open');
+  el.nextElementSibling.classList.toggle('open');
 }
-
 function toggleCurNotes() {
   document.getElementById('cur-notes-chevron').classList.toggle('open');
   document.getElementById('cur-notes-body').classList.toggle('open');
 }
 
-// ── Superset ─────────────────────────────────────────────
-const SS_COLORS = ['red', 'orange', 'yellow', 'purple'];
-
+// ── Superset ────────────────────────────────────────────
 function setCurSuperset(color) {
-  // Toggle off if already selected
   currentSuperset = (currentSuperset === color) ? null : color;
-  // Update swatch selection in current-ex notes body
-  document.querySelectorAll('#cur-notes-body .ss-swatch').forEach(el => {
-    el.classList.toggle('selected', el.dataset.color === currentSuperset);
-  });
-  // Apply stripe to title input
-  const curEx = document.getElementById('current-ex');
+  document.querySelectorAll('#cur-notes-body .ss-swatch').forEach(el =>
+    el.classList.toggle('selected', el.dataset.color === currentSuperset));
+  const ce = document.getElementById('current-ex');
+  if (currentSuperset) ce.dataset.superset = currentSuperset; else delete ce.dataset.superset;
+  // If a color was just selected, pull rest from matching saved exercises (if any) or push current rest to them
   if (currentSuperset) {
-    curEx.dataset.superset = currentSuperset;
-  } else {
-    delete curEx.dataset.superset;
+    const curRest = document.getElementById('cur-rest-input').value.trim();
+    const matchRest = exercises.find(ex => ex.superset === currentSuperset && ex.rest)?.rest || '';
+    if (matchRest && !curRest) {
+      document.getElementById('cur-rest-input').value = matchRest;
+    } else if (curRest) {
+      syncCurrentExRest(curRest);
+    }
   }
 }
 
 function setSavedSuperset(ei, color) {
-  // Toggle off if already selected
   exercises[ei].superset = (exercises[ei].superset === color) ? null : color;
-  save();
-  // Update DOM without full re-render: just fix the card's data-superset + swatches
-  const cards = document.querySelectorAll('.ex-card');
-  const card  = cards[ei];
-  if (!card) return;
+  // Sync rest when color selected
   if (exercises[ei].superset) {
-    card.dataset.superset = exercises[ei].superset;
-  } else {
-    delete card.dataset.superset;
+    const matchRest = exercises.find((ex, i) => i !== ei && ex.superset === exercises[ei].superset && ex.rest)?.rest || '';
+    if (matchRest && !exercises[ei].rest) {
+      exercises[ei].rest = matchRest;
+      const inp = document.getElementById('rest-' + ei);
+      if (inp) inp.value = matchRest;
+    } else if (exercises[ei].rest) {
+      syncSupersetRest(ei, exercises[ei].rest);
+    }
   }
-  card.querySelectorAll('.ss-swatch').forEach(el => {
-    el.classList.toggle('selected', el.dataset.color === exercises[ei].superset);
-  });
+  save();
+  const card = document.querySelectorAll('.ex-card')[ei];
+  if (!card) return;
+  if (exercises[ei].superset) card.dataset.superset = exercises[ei].superset;
+  else delete card.dataset.superset;
+  card.querySelectorAll('.ss-swatch').forEach(el =>
+    el.classList.toggle('selected', el.dataset.color === exercises[ei].superset));
 }
 
+// ── Edit title inline ───────────────────────────────────
 function editExTitle(spanEl, ei) {
-  // Already editing
-  if (spanEl.querySelector('input')) return;
-
-  const current = exercises[ei].title || '';
-  const input   = document.createElement('input');
-  input.type      = 'text';
-  input.className = 'title-edit';
-  input.value     = current;
-  input.maxLength = 200;
-  input.autocomplete = 'off';
-  input.spellcheck   = false;
-
+  const inp = document.createElement('input');
+  inp.type = 'text'; inp.className = 'title-edit';
+  inp.value = exercises[ei].title || '';
+  inp.maxLength = 200; inp.autocomplete = 'off'; inp.spellcheck = false;
   const commit = () => {
-    const val = input.value.trim();
-    exercises[ei].title = val;
-    save();
-    // Swap input back to span without full re-render
-    const span = document.createElement('span');
-    span.className = 'title-text';
-    span.onclick   = e => { e.stopPropagation(); editExTitle(span, ei); };
-    span.textContent = val || 'Untitled Exercise';
-    const bar = input.closest('.ex-card-title');
-    bar.classList.toggle('untitled', !val);
-    input.replaceWith(span);
+    const val = inp.value.trim();
+    exercises[ei].title = val; save();
+    const sp = document.createElement('span');
+    sp.className = 'title-text';
+    sp.onclick = e => { e.stopPropagation(); editExTitle(sp, ei); };
+    sp.textContent = val || 'Untitled Exercise';
+    inp.closest('.ex-card-title').classList.toggle('untitled', !val);
+    inp.replaceWith(sp);
   };
-
-  input.addEventListener('blur',    commit);
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); input.blur(); } });
-
-  spanEl.replaceWith(input);
-  input.focus();
-  input.select();
+  inp.addEventListener('blur', commit);
+  inp.addEventListener('keydown', e => { if (e.key==='Enter') { e.preventDefault(); inp.blur(); } });
+  spanEl.replaceWith(inp); inp.focus(); inp.select();
 }
 
+// ── Insert set into saved exercise ──────────────────────
 function insertSet(ei) {
   const sets = exercises[ei].sets;
-  const prev = sets[sets.length - 1];
-  sets.push({
-    reps:   (prev && prev.reps)   ? prev.reps   : '',
-    weight: (prev && prev.weight) ? prev.weight : '',
-  });
-  save();
-  render();
-  // Scroll the new row into view and focus its reps input
+  const prev = sets[sets.length-1];
+  sets.push({ reps: prev?.reps||'', weight: prev?.weight||'' });
+  save(); render();
   setTimeout(() => {
-    const cards = document.querySelectorAll('.ex-card');
-    const card  = cards[ei];
+    const card = document.querySelectorAll('.ex-card')[ei];
     if (!card) return;
-    const rows  = card.querySelectorAll('.set-row');
-    const last  = rows[rows.length - 1];
-    last?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    last?.querySelector('.set-input')?.focus();
-    // Re-show the + button on the card we just edited
+    const rows = card.querySelectorAll('.set-row');
+    rows[rows.length-1]?.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    rows[rows.length-1]?.querySelector('.set-input')?.focus();
     card.querySelector('.ex-card-title')?.classList.add('active-insert');
   }, 60);
 }
 
 // ═══════════════════════════════════════════════════════════
-//  Reorder Mode
+//  Reorder / Delete modes
 // ═══════════════════════════════════════════════════════════
 function renderReorder(list) {
-  if (!exercises.length) {
-    list.innerHTML = '<p class="mode-hint">No exercises to reorder.</p>';
-    return;
-  }
-  list.innerHTML = exercises.map((ex, i) => `
+  if (!exercises.length) { list.innerHTML = '<p class="mode-hint">No exercises to reorder.</p>'; return; }
+  list.innerHTML = exercises.map((ex,i) => `
     <div class="mode-card">
       <span class="mode-card-title">${ex.title ? esc(ex.title) : '<em style="opacity:.5">Untitled</em>'}</span>
       <div class="arrow-btns">
-        <button class="arrow-btn" onclick="moveEx(${i},-1)" ${i === 0 ? 'disabled' : ''}>▲</button>
-        <button class="arrow-btn" onclick="moveEx(${i}, 1)" ${i === exercises.length-1 ? 'disabled' : ''}>▼</button>
+        <button class="arrow-btn" onclick="moveEx(${i},-1)" ${i===0?'disabled':''}>▲</button>
+        <button class="arrow-btn" onclick="moveEx(${i}, 1)" ${i===exercises.length-1?'disabled':''}>▼</button>
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
-
-function moveEx(i, dir) {
-  const j = i + dir;
-  if (j < 0 || j >= exercises.length) return;
-  [exercises[i], exercises[j]] = [exercises[j], exercises[i]];
+function moveEx(i,dir) {
+  const j=i+dir; if(j<0||j>=exercises.length) return;
+  [exercises[i],exercises[j]]=[exercises[j],exercises[i]];
   renderReorder(document.getElementById('ex-list'));
 }
 
-// ═══════════════════════════════════════════════════════════
-//  Delete Mode
-// ═══════════════════════════════════════════════════════════
 function renderDelete(list) {
-  if (!exercises.length) {
-    list.innerHTML = '<p class="mode-hint">No exercises to delete.</p>';
-    return;
-  }
-  list.innerHTML = exercises.map((ex, i) => `
+  if (!exercises.length) { list.innerHTML = '<p class="mode-hint">No exercises to delete.</p>'; return; }
+  list.innerHTML = exercises.map((ex,i) => `
     <div class="mode-card">
       <input class="del-check" type="checkbox" id="dc${i}" onchange="refreshDeleteBtn()">
       <label for="dc${i}" class="mode-card-title" style="cursor:pointer">
         ${ex.title ? esc(ex.title) : '<em style="opacity:.5">Untitled</em>'}
       </label>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
-
 function refreshDeleteBtn() {
-  const n   = document.querySelectorAll('.del-check:checked').length;
-  const btn = document.getElementById('cbar-confirm');
-  btn.textContent = n > 0 ? `🗑  Delete (${n})` : '🗑  Delete Selected';
+  const n = document.querySelectorAll('.del-check:checked').length;
+  document.getElementById('cbar-confirm').textContent = n>0 ? `🗑  Delete (${n})` : '🗑  Delete Selected';
+}
+function startReorder() {
+  closeSettings(); mode='reorder';
+  document.getElementById('current-ex').style.display='none';
+  render();
+  const btn=document.getElementById('cbar-confirm');
+  btn.textContent='Confirm Order'; btn.classList.remove('is-delete');
+  document.getElementById('confirm-bar').classList.add('show');
+}
+function startDelete() {
+  closeSettings(); mode='delete';
+  document.getElementById('current-ex').style.display='none';
+  render();
+  const btn=document.getElementById('cbar-confirm');
+  btn.textContent='🗑  Delete Selected'; btn.classList.add('is-delete');
+  document.getElementById('confirm-bar').classList.add('show');
+}
+function cancelMode() {
+  mode='normal';
+  document.getElementById('confirm-bar').classList.remove('show');
+  document.getElementById('current-ex').style.display='';
+  render();
+}
+function confirmMode() {
+  if (mode==='reorder') { save(); cancelMode(); }
+  else if (mode==='delete') {
+    const checked=[...document.querySelectorAll('.del-check:checked')];
+    if (!checked.length) { cancelMode(); return; }
+    const toRm=new Set(checked.map(cb=>parseInt(cb.id.replace('dc',''))));
+    exercises=exercises.filter((_,i)=>!toRm.has(i));
+    save(); cancelMode();
+  }
 }
 
 // ═══════════════════════════════════════════════════════════
 //  Current Sets
 // ═══════════════════════════════════════════════════════════
 function flushCurrentInputs() {
-  document.querySelectorAll('#current-sets .set-row').forEach((row, i) => {
-    const [rIn, wIn] = row.querySelectorAll('.set-input');
-    if (currentSets[i]) {
-      currentSets[i].reps   = rIn ? rIn.value : '';
-      currentSets[i].weight = wIn ? wIn.value : '';
-    }
+  document.querySelectorAll('#current-sets .set-row').forEach((row,i) => {
+    const [rIn,wIn]=row.querySelectorAll('.set-input');
+    if (currentSets[i]) { currentSets[i].reps=rIn?rIn.value:''; currentSets[i].weight=wIn?wIn.value:''; }
   });
 }
-
 function renderCurrentSets() {
-  const c = document.getElementById('current-sets');
-  c.innerHTML = currentSets.map((s, i) => `
+  const c=document.getElementById('current-sets');
+  c.innerHTML=currentSets.map((s,i)=>`
     <div class="set-row-wrap">
       <div class="set-row">
-        <div class="set-num">${i + 1}</div>
-        <input class="set-input" type="text" inputmode="decimal"
-          value="${esc(s.reps)}" placeholder="Reps">
-        <input class="set-input" type="text" inputmode="decimal"
-          value="${esc(s.weight)}" placeholder="lbs">
+        <div class="set-num">${i+1}</div>
+        <input class="set-input" type="text" inputmode="decimal" value="${esc(s.reps)}" placeholder="Reps">
+        <input class="set-input" type="text" inputmode="decimal" value="${esc(s.weight)}" placeholder="lbs">
       </div>
       <button class="set-del-btn" onclick="deleteCurrentSet(${i})" title="Delete set">🗑</button>
-    </div>
-  `).join('');
+    </div>`).join('');
   attachSwipeHandlers(c);
 }
-
-// ═══════════════════════════════════════════════════════════
-//  Set Deletion
-// ═══════════════════════════════════════════════════════════
 function deleteCurrentSet(i) {
-  if (currentSets.length === 1) return; // keep at least one row
+  if (currentSets.length===1) return;
+  flushCurrentInputs(); currentSets.splice(i,1); renderCurrentSets();
+}
+function deleteSavedSet(ei,si) {
+  if (exercises[ei].sets.length===1) return;
+  exercises[ei].sets.splice(si,1); save(); render();
+}
+function addSet() {
   flushCurrentInputs();
-  currentSets.splice(i, 1);
+  const prev=currentSets[currentSets.length-1];
+  currentSets.push({ reps:prev?.reps||'', weight:prev?.weight||'' });
   renderCurrentSets();
-}
-
-function deleteSavedSet(ei, si) {
-  if (exercises[ei].sets.length === 1) return; // keep at least one row
-  exercises[ei].sets.splice(si, 1);
-  save();
-  render();
-}
-
-// ═══════════════════════════════════════════════════════════
-//  Swipe-to-Delete (mobile)
-// ═══════════════════════════════════════════════════════════
-function attachSwipeHandlers(container) {
-  container.querySelectorAll('.set-row-wrap').forEach(wrap => {
-    let startX = 0, startY = 0, tracking = false;
-
-    wrap.addEventListener('touchstart', e => {
-      startX   = e.touches[0].clientX;
-      startY   = e.touches[0].clientY;
-      tracking = false;
-    }, { passive: true });
-
-    wrap.addEventListener('touchmove', e => {
-      const dx = e.touches[0].clientX - startX;
-      const dy = e.touches[0].clientY - startY;
-      if (!tracking) {
-        if (Math.abs(dx) < Math.abs(dy) || Math.abs(dx) < 6) return;
-        tracking = true;
-      }
-      if (dx < 0) {
-        e.preventDefault();
-        const row = wrap.querySelector('.set-row');
-        row.style.transition = 'none';
-        row.style.transform  = `translateX(${Math.max(dx, -56)}px)`;
-        const btn = wrap.querySelector('.set-del-btn');
-        btn.style.transition = 'none';
-        btn.style.transform  = `translateX(${Math.max(100 + (dx / 56) * 100, 0)}%)`;
-      }
-    }, { passive: false });
-
-    wrap.addEventListener('touchend', e => {
-      if (!tracking) return;
-      const dx  = e.changedTouches[0].clientX - startX;
-      const row = wrap.querySelector('.set-row');
-      const btn = wrap.querySelector('.set-del-btn');
-      row.style.transition = '';
-      btn.style.transition = '';
-      row.style.transform  = '';
-      btn.style.transform  = '';
-      if (dx < -40) {
-        wrap.classList.add('show-del');
-      } else {
-        wrap.classList.remove('show-del');
-      }
-    });
-  });
-
-  // Dismiss any open swipe when tapping elsewhere
-  document.addEventListener('touchstart', e => {
-    if (!e.target.closest('.set-row-wrap')) {
-      document.querySelectorAll('.set-row-wrap.show-del')
-        .forEach(w => w.classList.remove('show-del'));
-    }
-  }, { passive: true });
+  setTimeout(()=>{
+    const rows=document.querySelectorAll('#current-sets .set-row');
+    rows[rows.length-1]?.scrollIntoView({behavior:'smooth',block:'nearest'});
+    rows[rows.length-1]?.querySelector('.set-input')?.focus();
+  },60);
 }
 
 // ═══════════════════════════════════════════════════════════
-//  Done / Resume
+//  Next Exercise / Done / Resume
 // ═══════════════════════════════════════════════════════════
-function doneWorkout() {
+function nextExercise() {
   flushCurrentInputs();
-  const title    = document.getElementById('ex-title-input').value.trim();
-  const rest     = document.getElementById('cur-rest-input').value.trim();
-  const notes    = document.getElementById('cur-notes-input').value.trim();
-  const hasSets  = currentSets.some(s => s.reps || s.weight);
+  const title=document.getElementById('ex-title-input').value.trim();
+  const rest=document.getElementById('cur-rest-input').value.trim();
+  const notes=document.getElementById('cur-notes-input').value.trim();
+  const hasSets=currentSets.some(s=>s.reps||s.weight);
+  if (!title&&!hasSets) return;
+  exercises.push({ title,rest,notes,superset:currentSuperset,sets:currentSets.map(s=>({...s})) });
+  save();
+  resetCurrentEx(); render(); renderCurrentSets();
+  setTimeout(()=>{
+    document.getElementById('current-ex').scrollIntoView({behavior:'smooth',block:'start'});
+    document.getElementById('ex-title-input').focus();
+  },60);
+}
 
-  if (title || hasSets) {
-    exercises.push({ title, rest, notes, superset: currentSuperset, sets: currentSets.map(s => ({ ...s })) });
-    save();
-    render();
-  }
-
-  document.getElementById('current-ex').style.display = 'none';
+async function doneWorkout() {
+  flushCurrentInputs();
+  const title=document.getElementById('ex-title-input').value.trim();
+  const rest=document.getElementById('cur-rest-input').value.trim();
+  const notes=document.getElementById('cur-notes-input').value.trim();
+  const hasSets=currentSets.some(s=>s.reps||s.weight);
+  if (title||hasSets) { exercises.push({ title,rest,notes,superset:currentSuperset,sets:currentSets.map(s=>({...s})) }); }
+  activeSession.completed=true;
+  await saveSession();
+  editMode = false;
+  applyEditMode();
+  render();
   document.getElementById('done-card').classList.add('show');
 }
 
 function resumeWorkout() {
-  // Reset entry form for a fresh exercise
-  document.getElementById('ex-title-input').value  = '';
-  document.getElementById('cur-rest-input').value  = '';
-  document.getElementById('cur-notes-input').value = '';
+  editMode = true;
+  applyEditMode();
+  resetCurrentEx();
+  document.getElementById('done-card').classList.remove('show');
+  renderCurrentSets();
+  setTimeout(()=>{
+    document.getElementById('current-ex').scrollIntoView({behavior:'smooth',block:'start'});
+    document.getElementById('ex-title-input').focus();
+  },60);
+}
+
+function resetCurrentEx() {
+  document.getElementById('ex-title-input').value='';
+  document.getElementById('cur-rest-input').value='';
+  document.getElementById('cur-notes-input').value='';
   document.getElementById('cur-notes-body').classList.remove('open');
   document.getElementById('cur-notes-chevron').classList.remove('open');
-  currentSuperset = null;
+  currentSuperset=null;
   delete document.getElementById('current-ex').dataset.superset;
-  document.querySelectorAll('#cur-notes-body .ss-swatch').forEach(el => el.classList.remove('selected'));
-  currentSets = [{ reps: '', weight: '' }];
-  renderCurrentSets();
-
-  document.getElementById('done-card').classList.remove('show');
-  document.getElementById('current-ex').style.display = '';
-
-  setTimeout(() => {
-    document.getElementById('current-ex').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    document.getElementById('ex-title-input').focus();
-  }, 60);
-}
-
-function addSet() {
-  flushCurrentInputs();
-  const prev = currentSets[currentSets.length - 1];
-  const reps   = (prev && prev.reps)   ? prev.reps   : '';
-  const weight = (prev && prev.weight) ? prev.weight : '';
-  currentSets.push({ reps, weight });
-  renderCurrentSets();
-  setTimeout(() => {
-    const rows = document.querySelectorAll('#current-sets .set-row');
-    rows[rows.length - 1]?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    rows[rows.length - 1]?.querySelector('.set-input')?.focus();
-  }, 60);
+  document.querySelectorAll('#cur-notes-body .ss-swatch').forEach(el=>el.classList.remove('selected'));
+  currentSets=[{reps:'',weight:''}];
 }
 
 // ═══════════════════════════════════════════════════════════
-//  Next Exercise
+//  Clear Session
 // ═══════════════════════════════════════════════════════════
-function nextExercise() {
-  flushCurrentInputs();
-  const title = document.getElementById('ex-title-input').value.trim();
-  const rest  = document.getElementById('cur-rest-input').value.trim();
-  const notes = document.getElementById('cur-notes-input').value.trim();
-  const hasSets = currentSets.some(s => s.reps || s.weight);
-  if (!title && !hasSets) return;
-
-  exercises.push({ title, rest, notes, superset: currentSuperset, sets: currentSets.map(s => ({ ...s })) });
-  save();
-
-  // Reset
-  document.getElementById('ex-title-input').value = '';
-  document.getElementById('cur-rest-input').value  = '';
-  document.getElementById('cur-notes-input').value = '';
-  const notesBody    = document.getElementById('cur-notes-body');
-  const noteChevron  = document.getElementById('cur-notes-chevron');
-  notesBody.classList.remove('open');
-  noteChevron.classList.remove('open');
-  currentSuperset = null;
-  const curEx = document.getElementById('current-ex');
-  delete curEx.dataset.superset;
-  document.querySelectorAll('#cur-notes-body .ss-swatch').forEach(el => el.classList.remove('selected'));
-  currentSets = [{ reps: '', weight: '' }];
-  render();
-  renderCurrentSets();
-
-  // Scroll active area into view
-  setTimeout(() => {
-    document.getElementById('current-ex').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    document.getElementById('ex-title-input').focus();
-  }, 60);
+function promptClearSession() {
+  closeSettings();
+  showModal('Clear Session?','This removes all exercises from the current session. History is unchanged.','Clear','var(--red)',()=>{
+    exercises=[]; resetCurrentEx(); render(); renderCurrentSets();
+    document.getElementById('done-card').classList.remove('show');
+    document.getElementById('current-ex').style.display='';
+    save();
+  });
 }
 
 // ═══════════════════════════════════════════════════════════
-//  Settings open/close
+//  Swipe-to-delete (set rows)
 // ═══════════════════════════════════════════════════════════
-function openSettings() {
-  document.getElementById('settings-overlay').classList.add('open');
+function attachSwipeHandlers(container) {
+  container.querySelectorAll('.set-row-wrap').forEach(wrap => {
+    let startX=0,startY=0,tracking=false;
+    wrap.addEventListener('touchstart',e=>{ startX=e.touches[0].clientX; startY=e.touches[0].clientY; tracking=false; },{passive:true});
+    wrap.addEventListener('touchmove',e=>{
+      const dx=e.touches[0].clientX-startX, dy=e.touches[0].clientY-startY;
+      if (!tracking) { if (Math.abs(dx)<Math.abs(dy)||Math.abs(dx)<6) return; tracking=true; }
+      if (dx<0) {
+        e.preventDefault();
+        const row=wrap.querySelector('.set-row'), btn=wrap.querySelector('.set-del-btn');
+        row.style.transition='none'; row.style.transform=`translateX(${Math.max(dx,-56)}px)`;
+        btn.style.transition='none'; btn.style.transform=`translateX(${Math.max(100+(dx/56)*100,0)}%)`;
+      }
+    },{passive:false});
+    wrap.addEventListener('touchend',e=>{
+      if (!tracking) return;
+      const dx=e.changedTouches[0].clientX-startX;
+      const row=wrap.querySelector('.set-row'), btn=wrap.querySelector('.set-del-btn');
+      row.style.transition=''; btn.style.transition=''; row.style.transform=''; btn.style.transform='';
+      wrap.classList.toggle('show-del',dx<-40);
+    });
+  });
+  document.addEventListener('touchstart',e=>{
+    if (!e.target.closest('.set-row-wrap'))
+      document.querySelectorAll('.set-row-wrap.show-del').forEach(w=>w.classList.remove('show-del'));
+  },{passive:true});
 }
-function closeSettings() {
-  document.getElementById('settings-overlay').classList.remove('open');
-}
-document.getElementById('settings-overlay').addEventListener('click', e => {
-  if (e.target === document.getElementById('settings-overlay')) closeSettings();
+
+// ═══════════════════════════════════════════════════════════
+//  Settings
+// ═══════════════════════════════════════════════════════════
+function openSettings() { document.getElementById('settings-overlay').classList.add('open'); }
+function closeSettings() { document.getElementById('settings-overlay').classList.remove('open'); }
+document.getElementById('settings-overlay').addEventListener('click',e=>{
+  if (e.target===document.getElementById('settings-overlay')) closeSettings();
 });
 
 // ═══════════════════════════════════════════════════════════
-//  Mode helpers
+//  Export — multi-format modal
 // ═══════════════════════════════════════════════════════════
-function startReorder() {
-  closeSettings();
-  mode = 'reorder';
-  document.getElementById('current-ex').style.display = 'none';
-  render();
-  const btn = document.getElementById('cbar-confirm');
-  btn.textContent = 'Confirm Order';
-  btn.classList.remove('is-delete');
-  document.getElementById('confirm-bar').classList.add('show');
-}
-
-function startDelete() {
-  closeSettings();
-  mode = 'delete';
-  document.getElementById('current-ex').style.display = 'none';
-  render();
-  const btn = document.getElementById('cbar-confirm');
-  btn.textContent = '🗑  Delete Selected';
-  btn.classList.add('is-delete');
-  document.getElementById('confirm-bar').classList.add('show');
-}
-
-function cancelMode() {
-  mode = 'normal';
-  document.getElementById('confirm-bar').classList.remove('show');
-  document.getElementById('current-ex').style.display = '';
-  render();
-}
-
-function confirmMode() {
-  if (mode === 'reorder') {
-    save();
-    cancelMode();
-  } else if (mode === 'delete') {
-    const checked = [...document.querySelectorAll('.del-check:checked')];
-    if (!checked.length) { cancelMode(); return; }
-    const toRemove = new Set(checked.map(cb => parseInt(cb.id.replace('dc', ''))));
-    exercises = exercises.filter((_, i) => !toRemove.has(i));
-    save();
-    cancelMode();
-  }
-}
-
-// ═══════════════════════════════════════════════════════════
-//  Clear All
-// ═══════════════════════════════════════════════════════════
-function promptClearAll() {
-  closeSettings();
-  showModal(
-    'Clear All Data?',
-    'This will permanently delete all logged exercises. This cannot be undone.',
-    'Clear All',
-    'var(--red)',
-    () => {
-      exercises   = [];
-      currentSets = [{ reps: '', weight: '' }];
-      document.getElementById('ex-title-input').value = '';
-      document.getElementById('cur-rest-input').value  = '';
-      document.getElementById('cur-notes-input').value = '';
-      document.getElementById('cur-notes-body').classList.remove('open');
-      document.getElementById('cur-notes-chevron').classList.remove('open');
-      currentSuperset = null;
-      delete document.getElementById('current-ex').dataset.superset;
-      document.querySelectorAll('#cur-notes-body .ss-swatch').forEach(el => el.classList.remove('selected'));
-      save();
-      render();
-      renderCurrentSets();
-    }
-  );
-}
-
-// ═══════════════════════════════════════════════════════════
-//  Export Markdown
-// ═══════════════════════════════════════════════════════════
-function exportMd() {
+function openExportModal() {
   closeSettings();
   flushCurrentInputs();
+  const title=document.getElementById('ex-title-input').value.trim();
+  const rest=document.getElementById('cur-rest-input').value.trim();
+  const notes=document.getElementById('cur-notes-input').value.trim();
+  const hasCur=currentSets.some(s=>s.reps||s.weight)||title;
+  const all=[...exercises];
+  if (hasCur) all.push({title:title||'Untitled',rest,notes,superset:currentSuperset,sets:currentSets});
 
-  const date = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-  let md = `# Workout Log — ${date}\n\n`;
+  document.getElementById('modal-title').textContent='Export Workout';
+  document.getElementById('modal-body').textContent=`${all.length} exercise${all.length!==1?'s':''} ready to export. Choose format:`;
+  document.getElementById('modal-btns').innerHTML=`
+    <button class="export-btn" onclick="runExport('json')">JSON</button>
+    <button class="export-btn" onclick="runExport('md')">Markdown</button>
+    <button class="export-btn" onclick="runExport('csv')">CSV</button>
+    <button onclick="closeModal()" style="width:100%;padding:13px;border:1px solid var(--border);border-radius:10px;font-size:1rem;font-weight:700;background:var(--surface2);color:var(--text);cursor:pointer">Cancel</button>
+  `;
+  document.getElementById('modal-btns').style.flexDirection='column';
+  document.getElementById('modal-overlay').classList.add('open');
+}
 
-  const all = [...exercises];
-  const curTitle   = document.getElementById('ex-title-input').value.trim();
-  const curRest    = document.getElementById('cur-rest-input').value.trim();
-  const curNotes   = document.getElementById('cur-notes-input').value.trim();
-  const curHasData = currentSets.some(s => s.reps || s.weight);
-  if (curTitle || curHasData) {
-    all.push({ title: curTitle || 'Untitled', rest: curRest, notes: curNotes, superset: currentSuperset, sets: currentSets });
-  }
+function runExport(fmt) {
+  closeModal();
+  flushCurrentInputs();
+  const title=document.getElementById('ex-title-input').value.trim();
+  const rest=document.getElementById('cur-rest-input').value.trim();
+  const notes=document.getElementById('cur-notes-input').value.trim();
+  const hasCur=currentSets.some(s=>s.reps||s.weight)||title;
+  const all=[...exercises];
+  if (hasCur) all.push({title:title||'Untitled',rest,notes,superset:currentSuperset,sets:currentSets});
 
-  if (!all.length) {
-    md += '_No exercises logged._\n';
-  } else {
-    all.forEach(ex => {
-      md += `## ${ex.title || 'Untitled Exercise'}\n\n`;
-      if (ex.rest)      md += `**Rest:** ${ex.rest} sec\n\n`;
-      if (ex.notes)     md += `**Notes:** ${ex.notes}\n\n`;
-      if (ex.superset)  md += `**Superset:** ${ex.superset}\n\n`;
-      md += `| Set | Reps | Weight |\n|:---:|:----:|:------:|\n`;
-      ex.sets.forEach((s, i) => {
-        md += `| ${i + 1} | ${s.reps || '—'} | ${s.weight || '—'} |\n`;
-      });
-      md += '\n';
+  const wName=activeSession.name||'Workout';
+  const dateSlug=new Date().toISOString().slice(0,10);
+  let content='', mime='text/plain', ext='txt';
+
+  if (fmt==='json') {
+    content=JSON.stringify({ name:activeSession.name, date:activeSession.date||new Date().toISOString(), exercises:all }, null, 2);
+    mime='application/json'; ext='json';
+  } else if (fmt==='md') {
+    const date=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    content=`# ${wName} — ${date}\n\n`;
+    if (!all.length) { content+='_No exercises logged._\n'; }
+    else all.forEach(ex=>{
+      content+=`## ${ex.title||'Untitled Exercise'}\n\n`;
+      if (ex.rest)     content+=`**Rest:** ${ex.rest} sec\n\n`;
+      if (ex.notes)    content+=`**Notes:** ${ex.notes}\n\n`;
+      if (ex.superset) content+=`**Superset:** ${ex.superset}\n\n`;
+      content+=`| Set | Reps | Weight |\n|:---:|:----:|:------:|\n`;
+      ex.sets.forEach((s,i)=>{ content+=`| ${i+1} | ${s.reps||'—'} | ${s.weight||'—'} |\n`; });
+      content+='\n';
     });
+    mime='text/markdown'; ext='md';
+  } else if (fmt==='csv') {
+    content='Date,Workout,Exercise,Superset,Rest (sec),Set,Reps,Weight,Notes\n';
+    const d=new Date().toLocaleDateString('en-US');
+    all.forEach(ex=>{
+      ex.sets.forEach((s,i)=>{
+        const cols=[d,wName,ex.title||'',ex.superset||'',ex.rest||'',i+1,s.reps||'',s.weight||'',i===0?(ex.notes||''):''];
+        content+=cols.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')+'\n';
+      });
+    });
+    mime='text/csv'; ext='csv';
   }
 
-  const blob = new Blob([md], { type: 'text/markdown' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href     = url;
-  a.download = `workout-${new Date().toISOString().slice(0,10)}.md`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  const blob=new Blob([content],{type:mime});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=`${dateSlug}-${wName.replace(/\s+/g,'-').toLowerCase()}.${ext}`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1475,162 +1514,112 @@ function exportMd() {
 // ═══════════════════════════════════════════════════════════
 function triggerImport() {
   closeSettings();
-  const input = document.getElementById('import-file');
-  input.value = '';   // allow re-selecting the same file
-  input.click();
+  const inp=document.getElementById('import-file'); inp.value=''; inp.click();
 }
-
 function handleImport(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const parsed = parseMd(e.target.result);
-    if (!parsed.length) {
-      showModal('Nothing Found', 'No exercises could be read from that file. Make sure it was exported from LIFTED.', 'OK', 'var(--blue)', () => {});
-      return;
-    }
-    const hasExisting = exercises.length > 0 ||
-      document.getElementById('ex-title-input').value.trim() ||
-      currentSets.some(s => s.reps || s.weight);
-
-    if (hasExisting) {
-      showImportChoiceModal(parsed);
-    } else {
-      loadImport(parsed, false);
-    }
+  const file=input.files[0]; if (!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const parsed=parseMd(e.target.result);
+    if (!parsed.length) { showModal('Nothing Found','No exercises could be read from that file.','OK','var(--blue)',()=>{}); return; }
+    const hasExisting=exercises.length>0||document.getElementById('ex-title-input').value.trim()||currentSets.some(s=>s.reps||s.weight);
+    if (hasExisting) showImportChoiceModal(parsed);
+    else loadImport(parsed,false);
   };
   reader.readAsText(file);
 }
-
 function parseMd(text) {
-  const result = [];
-  let current  = null;
-
+  const result=[]; let current=null;
   for (const raw of text.split('\n')) {
-    const line = raw.trim();
-
-    // Exercise heading: ## Title
+    const line=raw.trim();
     if (line.startsWith('## ')) {
       if (current) result.push(current);
-      const title = line.slice(3).trim().replace(/<[^>]*>/g, '').slice(0, 200);
-      current = { title, rest: '', notes: '', superset: null, sets: [] };
+      current={title:line.slice(3).trim().replace(/<[^>]*>/g,'').slice(0,200),rest:'',notes:'',superset:null,sets:[]};
       continue;
     }
-
     if (!current) continue;
-
-    // **Rest:** 60 sec
-    const restMatch = line.match(/^\*\*Rest:\*\*\s*(\S+)/i);
-    if (restMatch) { current.rest = restMatch[1].replace(/[^0-9.]/g, '').slice(0, 6); continue; }
-
-    // **Notes:** …
-    const notesMatch = line.match(/^\*\*Notes:\*\*\s*(.*)/i);
-    if (notesMatch) { current.notes = notesMatch[1].replace(/<[^>]*>/g, '').slice(0, 1000); continue; }
-
-    // **Superset:** color
-    const ssMatch = line.match(/^\*\*Superset:\*\*\s*(\w+)/i);
-    if (ssMatch) {
-      const c = ssMatch[1].toLowerCase();
-      if (['red','orange','yellow','purple'].includes(c)) current.superset = c;
-      continue;
-    }
-
-    // Data row: | 1 | value | value |  (skip header and separator rows)
+    const restM=line.match(/^\*\*Rest:\*\*\s*(\S+)/i);
+    if (restM) { current.rest=restM[1].replace(/[^0-9.]/g,'').slice(0,6); continue; }
+    const notesM=line.match(/^\*\*Notes:\*\*\s*(.*)/i);
+    if (notesM) { current.notes=notesM[1].replace(/<[^>]*>/g,'').slice(0,1000); continue; }
+    const ssM=line.match(/^\*\*Superset:\*\*\s*(\w+)/i);
+    if (ssM) { const c=ssM[1].toLowerCase(); if(['red','orange','yellow','purple'].includes(c)) current.superset=c; continue; }
     if (line.startsWith('|')) {
-      const cells = line.split('|').map(c => c.trim()).filter((_, i, a) => i > 0 && i < a.length - 1);
-      if (cells.length < 3) continue;
-      const setNum = cells[0];
-      if (/^[:\-]+$/.test(setNum) || setNum.toLowerCase() === 'set') continue;
+      const cells=line.split('|').map(c=>c.trim()).filter((_,i,a)=>i>0&&i<a.length-1);
+      if (cells.length<3) continue;
+      const setNum=cells[0];
+      if (/^[:\-]+$/.test(setNum)||setNum.toLowerCase()==='set') continue;
       if (!/^\d+$/.test(setNum)) continue;
-
-      const reps   = cells[1] === '—' ? '' : cells[1].replace(/<[^>]*>/g, '').slice(0, 20);
-      const weight = cells[2] === '—' ? '' : cells[2].replace(/<[^>]*>/g, '').slice(0, 20);
-      current.sets.push({ reps, weight });
+      current.sets.push({
+        reps:   cells[1]==='—'?'':cells[1].replace(/<[^>]*>/g,'').slice(0,20),
+        weight: cells[2]==='—'?'':cells[2].replace(/<[^>]*>/g,'').slice(0,20)
+      });
     }
   }
   if (current) result.push(current);
-
-  return result.filter(ex => ex.sets.length > 0);
+  return result.filter(ex=>ex.sets.length>0);
 }
-
-function loadImport(parsed, append) {
+function loadImport(parsed,append) {
   flushCurrentInputs();
   if (append) {
-    // Save whatever is currently in progress first
-    const curTitle   = document.getElementById('ex-title-input').value.trim();
-    const curHasData = currentSets.some(s => s.reps || s.weight);
-    if (curTitle || curHasData) {
-      exercises.push({ title: curTitle || 'Untitled', sets: currentSets.map(s => ({ ...s })) });
-    }
-    exercises = [...exercises, ...parsed];
+    const t=document.getElementById('ex-title-input').value.trim();
+    if (t||currentSets.some(s=>s.reps||s.weight)) exercises.push({title:t||'Untitled',sets:currentSets.map(s=>({...s}))});
+    exercises=[...exercises,...parsed];
   } else {
-    exercises = parsed;
-    document.getElementById('ex-title-input').value = '';
-    currentSets = [{ reps: '', weight: '' }];
-    renderCurrentSets();
+    exercises=parsed;
+    document.getElementById('ex-title-input').value='';
+    currentSets=[{reps:'',weight:''}]; renderCurrentSets();
   }
-  save();
-  render();
+  save(); render();
 }
-
 function showImportChoiceModal(parsed) {
-  const count = parsed.length;
-  document.getElementById('modal-title').textContent = `Import ${count} Exercise${count !== 1 ? 's' : ''}?`;
-  document.getElementById('modal-body').textContent  =
-    'You already have a workout in progress. Would you like to replace it or append the imported exercises to the end?';
-
-  // Reuse modal but swap buttons
-  const btns = document.querySelector('.modal-btns');
-  btns.innerHTML = `
-    <button id="modal-cancel"  onclick="closeModal()" style="background:var(--surface2);color:var(--text);border:1px solid var(--border)">Cancel</button>
-    <button onclick="closeModal(); loadImport(importPending, true)"  style="background:var(--blue);color:#fff;font-weight:700;flex:1;padding:12px;border:none;border-radius:10px">Append</button>
-    <button onclick="closeModal(); loadImport(importPending, false)" style="background:var(--red);color:#fff;font-weight:700;flex:1;padding:12px;border:none;border-radius:10px">Replace</button>
+  const count=parsed.length;
+  document.getElementById('modal-title').textContent=`Import ${count} Exercise${count!==1?'s':''}?`;
+  document.getElementById('modal-body').textContent='You already have a workout in progress. Replace it or append?';
+  document.getElementById('modal-btns').innerHTML=`
+    <button id="modal-cancel" onclick="closeModal()" style="background:var(--surface2);color:var(--text);border:1px solid var(--border)">Cancel</button>
+    <button onclick="closeModal();loadImport(importPending,true)"  style="background:var(--blue);color:#fff;font-weight:700;flex:1;padding:12px;border:none;border-radius:10px">Append</button>
+    <button onclick="closeModal();loadImport(importPending,false)" style="background:var(--red);color:#fff;font-weight:700;flex:1;padding:12px;border:none;border-radius:10px">Replace</button>
   `;
-  importPending = parsed;
+  importPending=parsed;
   document.getElementById('modal-overlay').classList.add('open');
 }
 
-let importPending = null;
 // ═══════════════════════════════════════════════════════════
-function showModal(title, body, confirmLabel, confirmColor, cb) {
-  document.getElementById('modal-title').textContent   = title;
-  document.getElementById('modal-body').textContent    = body;
-  const btn = document.getElementById('modal-confirm');
-  btn.textContent       = confirmLabel;
-  btn.style.background  = confirmColor;
-  modalCb = cb;
+//  Modal helpers
+// ═══════════════════════════════════════════════════════════
+function showModal(title,body,confirmLabel,confirmColor,cb) {
+  document.getElementById('modal-title').textContent=title;
+  document.getElementById('modal-body').textContent=body;
+  document.getElementById('modal-btns').innerHTML=`
+    <button id="modal-cancel" onclick="closeModal()" style="background:var(--surface2);color:var(--text);border:1px solid var(--border)">Cancel</button>
+    <button id="modal-confirm" onclick="runModalConfirm()" style="background:${confirmColor};color:#fff">${confirmLabel}</button>
+  `;
+  modalCb=cb;
   document.getElementById('modal-overlay').classList.add('open');
 }
 function closeModal() {
   document.getElementById('modal-overlay').classList.remove('open');
+  document.getElementById('modal-btns').style.flexDirection = '';
   modalCb = null;
 }
-function runModalConfirm() {
-  if (modalCb) modalCb();
-  closeModal();
-}
-document.getElementById('modal-overlay').addEventListener('click', e => {
-  if (e.target === document.getElementById('modal-overlay')) closeModal();
+function runModalConfirm() { if(modalCb) modalCb(); closeModal(); }
+document.getElementById('modal-overlay').addEventListener('click',e=>{
+  if (e.target===document.getElementById('modal-overlay')) closeModal();
 });
 
 // ═══════════════════════════════════════════════════════════
 //  Utils
 // ═══════════════════════════════════════════════════════════
 function esc(s) {
-  if (!s) return '';
-  return String(s)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  if(!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 // ─── Boot ────
 init();
-
-// ─── Service Worker ────
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js');
-  });
+  window.addEventListener('load', () => navigator.serviceWorker.register('/service-worker.js'));
 }
 </script>
 </body>
