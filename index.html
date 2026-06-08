@@ -298,7 +298,19 @@ body[data-edit="false"] #edit-mode-banner { display: block; }
 /* ══ Superset Swatches ═══════════════════════════════════ */
 .superset-row {
   display: flex; align-items: center; gap: 10px;
-  padding: 10px 16px 12px; flex-wrap: wrap;
+  padding: 10px 16px 4px; flex-wrap: wrap;
+}
+.timed-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 16px 12px;
+}
+.timed-row label {
+  display: flex; align-items: center; gap: 7px;
+  font-size: .82rem; font-weight: 700; color: var(--text-muted);
+  letter-spacing: .4px; cursor: pointer; user-select: none;
+}
+.timed-row input[type="checkbox"] {
+  width: 16px; height: 16px; cursor: pointer; accent-color: var(--blue);
 }
 .superset-label { font-size:.78rem; font-weight:700; color:var(--text-muted); letter-spacing:.4px; white-space:nowrap; }
 .ss-swatches { display:flex; gap:8px; align-items:center; }
@@ -675,6 +687,12 @@ body[data-edit="false"] #edit-mode-banner { display: block; }
       </div>
       <div id="cur-notes-body">
         <textarea id="cur-notes-input" class="notes-textarea" placeholder="Notes…" rows="3"></textarea>
+        <div class="timed-row">
+          <label>
+            <input type="checkbox" id="cur-timed-input" onchange="setCurTimed(this.checked)">
+            Timed exercise (duration instead of reps)
+          </label>
+        </div>
         <div class="superset-row">
           <span class="superset-label">Superset:</span>
           <div class="ss-swatches">
@@ -686,7 +704,7 @@ body[data-edit="false"] #edit-mode-banner { display: block; }
         </div>
       </div>
       <div class="sets-col-header">
-        <span>Set</span><span>Reps</span><span>Weight</span>
+        <span>Set</span><span id="cur-reps-header">Reps</span><span>Weight</span>
       </div>
       <div id="current-sets"></div>
       <div class="action-row">
@@ -774,6 +792,7 @@ function dbGet(store, key) {
 let exercises       = [];
 let currentSets     = [{ reps:'', weight:'' }];
 let currentSuperset = null;
+let currentTimed    = false;
 let mode            = 'normal';
 let isDark          = false;
 let editMode        = true;
@@ -885,7 +904,7 @@ async function goHistory() {
     const notes = document.getElementById('cur-notes-input').value.trim();
     const hasSets = currentSets.some(s => s.reps || s.weight);
     if (title || hasSets) {
-      exercises.push({ title, rest, notes, superset: currentSuperset, sets: currentSets.map(s => ({...s})) });
+      exercises.push({ title, rest, notes, superset: currentSuperset, timed: currentTimed, sets: currentSets.map(s => ({...s})) });
     }
     await saveSession();
   } else if (activeSession.id) {
@@ -1061,13 +1080,13 @@ function render() {
           onchange="syncSupersetRest(${ei}, this.value)">
         <span>sec</span>
       </div>
-      <div class="sets-col-header"><span>Set</span><span>Reps</span><span>Weight</span></div>
+      <div class="sets-col-header"><span>Set</span><span>${ex.timed?'Duration':'Reps'}</span><span>Weight</span></div>
       ${ex.sets.map((s,si) => `
         <div class="set-row-wrap">
           <div class="set-row">
             <div class="set-num">${si+1}</div>
             <input class="set-input" type="text" inputmode="decimal"
-              value="${esc(s.reps)}" placeholder="—"
+              value="${esc(s.reps)}" placeholder="${ex.timed?'Duration':'—'}"
               onchange="updateSavedSet(${ei},${si},'reps',this.value)">
             <input class="set-input" type="text" inputmode="decimal"
               value="${esc(s.weight)}" placeholder="—"
@@ -1082,6 +1101,12 @@ function render() {
       <div class="notes-body">
         <textarea class="notes-textarea" placeholder="Notes…" rows="3"
           onchange="exercises[${ei}].notes=this.value;save()">${esc(ex.notes||'')}</textarea>
+        <div class="timed-row">
+          <label>
+            <input type="checkbox" ${ex.timed?'checked':''} onchange="setSavedTimed(${ei},this.checked)">
+            Timed exercise (duration instead of reps)
+          </label>
+        </div>
         <div class="superset-row">
           <span class="superset-label">Superset:</span>
           <div class="ss-swatches">
@@ -1139,6 +1164,19 @@ function toggleCurNotes() {
 }
 
 // ── Superset ────────────────────────────────────────────
+function setCurTimed(checked) {
+  currentTimed = checked;
+  const hdr = document.getElementById('cur-reps-header');
+  if (hdr) hdr.textContent = checked ? 'Duration' : 'Reps';
+  renderCurrentSets();
+}
+
+function setSavedTimed(ei, checked) {
+  exercises[ei].timed = checked;
+  save();
+  render();
+}
+
 function setCurSuperset(color) {
   currentSuperset = (currentSuperset === color) ? null : color;
   document.querySelectorAll('#cur-notes-body .ss-swatch').forEach(el =>
@@ -1294,11 +1332,12 @@ function flushCurrentInputs() {
 }
 function renderCurrentSets() {
   const c=document.getElementById('current-sets');
+  const repLabel = currentTimed ? 'Duration' : 'Reps';
   c.innerHTML=currentSets.map((s,i)=>`
     <div class="set-row-wrap">
       <div class="set-row">
         <div class="set-num">${i+1}</div>
-        <input class="set-input" type="text" inputmode="decimal" value="${esc(s.reps)}" placeholder="Reps">
+        <input class="set-input" type="text" inputmode="decimal" value="${esc(s.reps)}" placeholder="${repLabel}">
         <input class="set-input" type="text" inputmode="decimal" value="${esc(s.weight)}" placeholder="lbs">
       </div>
       <button class="set-del-btn" onclick="deleteCurrentSet(${i})" title="Delete set">🗑</button>
@@ -1335,7 +1374,7 @@ function nextExercise() {
   const notes=document.getElementById('cur-notes-input').value.trim();
   const hasSets=currentSets.some(s=>s.reps||s.weight);
   if (!title&&!hasSets) return;
-  exercises.push({ title,rest,notes,superset:currentSuperset,sets:currentSets.map(s=>({...s})) });
+  exercises.push({ title,rest,notes,superset:currentSuperset,timed:currentTimed,sets:currentSets.map(s=>({...s})) });
   save();
   resetCurrentEx(); render(); renderCurrentSets();
   setTimeout(()=>{
@@ -1350,7 +1389,7 @@ async function doneWorkout() {
   const rest=document.getElementById('cur-rest-input').value.trim();
   const notes=document.getElementById('cur-notes-input').value.trim();
   const hasSets=currentSets.some(s=>s.reps||s.weight);
-  if (title||hasSets) { exercises.push({ title,rest,notes,superset:currentSuperset,sets:currentSets.map(s=>({...s})) }); }
+  if (title||hasSets) { exercises.push({ title,rest,notes,superset:currentSuperset,timed:currentTimed,sets:currentSets.map(s=>({...s})) }); }
   activeSession.completed=true;
   await saveSession();
   resetCurrentEx();
@@ -1378,9 +1417,14 @@ function resetCurrentEx() {
   document.getElementById('cur-notes-input').value='';
   document.getElementById('cur-notes-body').classList.remove('open');
   document.getElementById('cur-notes-chevron').classList.remove('open');
-  currentSuperset=null;
+  const timedBox = document.getElementById('cur-timed-input');
+  if (timedBox) timedBox.checked = false;
+  currentTimed    = false;
+  currentSuperset = null;
   delete document.getElementById('current-ex').dataset.superset;
   document.querySelectorAll('#cur-notes-body .ss-swatch').forEach(el=>el.classList.remove('selected'));
+  const hdr = document.getElementById('cur-reps-header');
+  if (hdr) hdr.textContent = 'Reps';
   currentSets=[{reps:'',weight:''}];
 }
 
