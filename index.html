@@ -490,6 +490,9 @@ body[data-edit="false"] #edit-mode-banner { display: block; }
   padding: 18px 20px; border-bottom: 1px solid var(--border);
   display: flex; flex-direction: column; gap: 10px;
 }
+/* Hide session management outside the session screen */
+#session-manage-section { display: none; }
+body[data-screen="session"] #session-manage-section { display: flex; }
 .settings-section-label {
   font-size: .7rem; font-weight: 700; letter-spacing: 1px;
   text-transform: uppercase; color: var(--text-muted); margin-bottom: 2px;
@@ -728,13 +731,6 @@ body[data-screen="library"]  #hdr-edit { display: none !important; }
         <span>Dark Mode</span>
         <label class="toggle">
           <input type="checkbox" id="dark-toggle" onchange="toggleDark()">
-          <span class="toggle-track"></span>
-        </label>
-      </div>
-      <div class="toggle-row">
-        <span>Lock Portrait</span>
-        <label class="toggle">
-          <input type="checkbox" id="orientation-toggle" onchange="toggleOrientationLock()">
           <span class="toggle-track"></span>
         </label>
       </div>
@@ -1006,8 +1002,6 @@ let modalCb         = null;
 let importPending   = null;
 let sessionPRs      = {};   // { 'bench press': { bestWeight:0, bestDuration:0 } }
 let libraryCache    = [];   // cached array of { name, targetSets, targetReps } objects
-let progressExName  = '';   // exercise name currently shown in #screen-exercise
-let orientationLock = true;
 
 // Active session metadata
 let activeSession = { id: null, name: '', date: null, isFavorite: false, completed: false, hadPR: false };
@@ -1020,11 +1014,6 @@ async function init() {
   await migrateLocalStorage();
   const settingsDark = await dbGet('settings', 'isDark');
   if (settingsDark) applyDark(settingsDark.value);
-  const settingsOrientation = await dbGet('settings', 'orientationLock');
-  orientationLock = settingsOrientation ? settingsOrientation.value : true;
-  const orientToggle = document.getElementById('orientation-toggle');
-  if (orientToggle) orientToggle.checked = orientationLock;
-  applyOrientationLock();
   await seedLibrary();
   libraryCache = await dbGetAll('library');
   goHistory();
@@ -1141,27 +1130,6 @@ async function seedLibrary() {
   for (const name of SEED_EXERCISES) {
     if (!existingNames.has(name)) await dbPut('library', { name });
   }
-}
-
-// ═══════════════════════════════════════════════════════════
-//  Orientation Lock
-// ═══════════════════════════════════════════════════════════
-function applyOrientationLock() {
-  if (orientationLock) {
-    if (screen.orientation && screen.orientation.lock) {
-      screen.orientation.lock('portrait').catch(() => {});
-    }
-  } else {
-    if (screen.orientation && screen.orientation.unlock) {
-      screen.orientation.unlock();
-    }
-  }
-}
-
-async function toggleOrientationLock() {
-  orientationLock = document.getElementById('orientation-toggle').checked;
-  await dbPut('settings', { key: 'orientationLock', value: orientationLock });
-  applyOrientationLock();
 }
 
 // ═══════════════════════════════════════════════════════════
