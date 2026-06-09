@@ -1682,7 +1682,14 @@ function useAsTemplate() {
   const templateExercises = exercises.map(ex => ({
     ...ex, sets: [{ reps: '', weight: '' }]
   }));
-  activeSession = { id: null, name: activeSession.name ? 'Template: ' + activeSession.name : '',
+  const now = new Date();
+  const day = now.getDate();
+  const suffix = day === 1 || day === 21 || day === 31 ? 'st'
+               : day === 2 || day === 22 ? 'nd'
+               : day === 3 || day === 23 ? 'rd' : 'th';
+  const dateTitle = now.toLocaleDateString('en-US', { weekday:'long', month:'long', year:'numeric' })
+    .replace(/(\w+)\s(\w+)\s(\d+)/, (_, wd, mo, yr) => `${wd}, ${mo} ${day}${suffix}, ${yr}`);
+  activeSession = { id: null, name: dateTitle,
     date: null, isFavorite: false, completed: false, hadPR: false };
   exercises     = templateExercises;
   editMode      = true;
