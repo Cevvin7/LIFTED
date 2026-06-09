@@ -122,15 +122,6 @@ body[data-edit="false"] #edit-mode-banner { display: block; }
 #screen-history { padding: 14px 14px 80px; display: none; flex-direction: column; gap: 14px; }
 #screen-history.active { display: flex; }
 
-#new-workout-btn {
-  width: 100%; padding: 16px; border: none; border-radius: 14px;
-  background: var(--blue); color: #fff;
-  font-size: 1rem; font-weight: 700; letter-spacing: .3px;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  box-shadow: var(--shadow); transition: filter .15s;
-}
-#new-workout-btn:active { filter: brightness(.88); }
-
 .hist-section-label {
   font-size: .7rem; font-weight: 700; letter-spacing: 1px;
   text-transform: uppercase; color: var(--text-muted);
@@ -560,6 +551,166 @@ body[data-edit="false"] #edit-mode-banner { display: block; }
 }
 .export-btn:active { opacity: .7; }
 .export-btn:hover  { border-color: var(--blue); background: var(--surface); }
+
+.sess-pr-trophy { font-size: .95rem; vertical-align: middle; }
+
+/* ══ History top row ══════════════════════════════════════ */
+#history-top-row {
+  display: flex; gap: 10px; align-items: center;
+}
+#new-workout-btn {
+  flex: 1; padding: 16px; border: none; border-radius: 14px;
+  background: var(--blue); color: #fff;
+  font-size: 1rem; font-weight: 700; letter-spacing: .3px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  box-shadow: var(--shadow); transition: filter .15s;
+}
+#new-workout-btn:active { filter: brightness(.88); }
+#progress-btn {
+  flex-shrink: 0; width: 52px; height: 52px; border: none; border-radius: 14px;
+  background: var(--surface); color: var(--blue);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow); transition: filter .15s;
+}
+#progress-btn:active { filter: brightness(.88); }
+
+/* ══ Progress screen ══════════════════════════════════════ */
+#screen-progress { display: none; }
+#screen-progress.active { display: block; }
+#progress-main { padding: 14px 14px 80px; }
+.progress-ex-row {
+  background: var(--surface); border-radius: 12px; box-shadow: var(--shadow);
+  padding: 14px 16px; margin-bottom: 10px; cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  transition: filter .15s;
+}
+.progress-ex-row:active { filter: brightness(.95); }
+.progress-ex-name { font-weight: 700; font-size: .97rem; }
+.progress-ex-pr   { font-size: .8rem; color: var(--text-muted); white-space: nowrap; }
+.progress-empty   { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: .95rem; }
+#progress-search {
+  width: 100%; padding: 10px 14px; border: 1.5px solid var(--border);
+  border-radius: 10px; background: var(--surface); color: var(--text);
+  font-size: .97rem; margin-bottom: 12px; outline: none;
+}
+#progress-search:focus { border-color: var(--blue); }
+
+/* ══ Exercise detail screen ═══════════════════════════════ */
+#screen-exercise { display: none; }
+#screen-exercise.active { display: block; }
+#exercise-detail-main { padding: 14px 14px 80px; }
+.ex-detail-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 4px; }
+.pr-summary-box {
+  background: var(--surface); border-radius: 12px; box-shadow: var(--shadow);
+  padding: 14px 16px; margin-bottom: 14px;
+}
+.pr-summary-box h4 { font-size: .72rem; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; }
+.pr-row { display: flex; justify-content: space-between; font-size: .9rem; margin-bottom: 4px; }
+.pr-val { font-weight: 700; color: var(--blue); }
+.pr-date { font-size: .78rem; color: var(--text-muted); }
+.chart-section {
+  background: var(--surface); border-radius: 12px; box-shadow: var(--shadow);
+  padding: 14px 10px 10px; margin-bottom: 14px;
+}
+.chart-section h4 { font-size: .72rem; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; padding: 0 6px; }
+.chart-empty { text-align: center; color: var(--text-muted); font-size: .88rem; padding: 24px 0; }
+
+/* ══ Library editor screen ════════════════════════════════ */
+#screen-library { display: none; }
+#screen-library.active { display: block; }
+#library-main { padding: 14px 14px 80px; }
+#library-top-row { display: flex; gap: 10px; margin-bottom: 12px; }
+#library-search {
+  flex: 1; padding: 10px 14px; border: 1.5px solid var(--border);
+  border-radius: 10px; background: var(--surface); color: var(--text);
+  font-size: .95rem; outline: none;
+}
+#library-search:focus { border-color: var(--blue); }
+#library-add-btn {
+  flex-shrink: 0; padding: 10px 16px; border: none; border-radius: 10px;
+  background: var(--blue); color: #fff; font-size: .95rem; font-weight: 700;
+}
+.lib-row {
+  background: var(--surface); border-radius: 12px; box-shadow: var(--shadow);
+  margin-bottom: 8px; overflow: hidden;
+}
+.lib-row-header {
+  display: flex; align-items: center; padding: 13px 16px; cursor: pointer;
+  transition: background .1s;
+}
+.lib-row-header:hover { background: var(--surface2); }
+.lib-row-name { flex: 1; font-weight: 700; font-size: .97rem; }
+.lib-row-target { font-size: .78rem; color: var(--text-muted); margin-right: 10px; }
+.lib-row-chevron { font-size: .8rem; color: var(--text-muted); transition: transform .2s; }
+.lib-row.open .lib-row-chevron { transform: rotate(90deg); }
+.lib-edit-body {
+  display: none; padding: 0 16px 14px; border-top: 1px solid var(--border);
+}
+.lib-row.open .lib-edit-body { display: block; }
+.lib-edit-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.lib-edit-row label { font-size: .8rem; color: var(--text-muted); font-weight: 600; white-space: nowrap; }
+.lib-edit-input {
+  flex: 1; min-width: 60px; padding: 7px 10px; border: 1.5px solid var(--border);
+  border-radius: 8px; background: var(--surface2); color: var(--text);
+  font-size: .9rem; outline: none;
+}
+.lib-edit-input:focus { border-color: var(--blue); }
+.lib-edit-actions { display: flex; gap: 8px; margin-top: 12px; }
+.lib-save-btn {
+  flex: 1; padding: 9px; border: none; border-radius: 8px;
+  background: var(--green); color: #fff; font-weight: 700; font-size: .9rem;
+}
+.lib-del-btn {
+  padding: 9px 14px; border: none; border-radius: 8px;
+  background: var(--red); color: #fff; font-weight: 700; font-size: .9rem;
+}
+
+/* ══ Back button visibility ═══════════════════════════════ */
+body[data-screen="progress"] #hdr-back { display: flex; }
+body[data-screen="exercise"] #hdr-back { display: flex; }
+body[data-screen="library"]  #hdr-back { display: flex; }
+body[data-screen="progress"] #hdr-star { display: none !important; }
+body[data-screen="progress"] #hdr-edit { display: none !important; }
+body[data-screen="exercise"] #hdr-star { display: none !important; }
+body[data-screen="exercise"] #hdr-edit { display: none !important; }
+body[data-screen="library"]  #hdr-star { display: none !important; }
+body[data-screen="library"]  #hdr-edit { display: none !important; }
+
+/* ══ Autocomplete ══════════════════════════════════════════ */
+#ex-title-wrap { position: relative; }
+#ex-title-wrap input { width: 100%; }
+#ex-autocomplete {
+  position: absolute; top: 100%; left: 0; right: 0; z-index: 200;
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 10px; box-shadow: var(--shadow-lg);
+  overflow: hidden; display: none;
+}
+.ac-item {
+  padding: 11px 14px; font-size: .95rem; cursor: pointer;
+  border-bottom: 1px solid var(--border); transition: background .1s;
+}
+.ac-item:last-child { border-bottom: none; }
+.ac-item:active, .ac-item:hover { background: var(--surface2); }
+#ex-last-used-hint {
+  font-size: .78rem; color: var(--blue); padding: 4px 2px 0;
+  display: none;
+}
+#ex-target-hint {
+  font-size: .78rem; color: var(--green); padding: 2px 2px 0;
+  display: none; font-weight: 600;
+}
+#ex-save-prompt {
+  display: none; align-items: center; gap: 8px; flex-wrap: wrap;
+  font-size: .8rem; color: var(--text-muted); padding: 6px 2px 2px;
+}
+#ex-save-prompt span { flex: 1; }
+#ex-save-prompt button {
+  padding: 4px 12px; border-radius: 7px; border: 1px solid var(--border);
+  background: var(--surface2); color: var(--text); font-size: .8rem; font-weight: 600;
+}
+#ex-save-prompt button:first-of-type { background: var(--blue); color: #fff; border-color: var(--blue); }
   </style>
 </head>
 <body data-screen="history">
@@ -580,6 +731,13 @@ body[data-edit="false"] #edit-mode-banner { display: block; }
           <span class="toggle-track"></span>
         </label>
       </div>
+      <div class="toggle-row">
+        <span>Lock Portrait</span>
+        <label class="toggle">
+          <input type="checkbox" id="orientation-toggle" onchange="toggleOrientationLock()">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
     </div>
     <div class="settings-section" id="session-manage-section">
       <div class="settings-section-label">Current Session</div>
@@ -595,6 +753,9 @@ body[data-edit="false"] #edit-mode-banner { display: block; }
     </div>
     <div class="settings-section">
       <div class="settings-section-label">Data</div>
+      <button class="s-btn s-btn-outline" onclick="goLibrary()">
+        <span>📋</span> Edit Exercise Library
+      </button>
       <button class="s-btn s-btn-outline" onclick="triggerImport()">
         <span>↑</span> Import .md
       </button>
@@ -633,7 +794,7 @@ body[data-edit="false"] #edit-mode-banner { display: block; }
 
 <!-- ══ Header ═══════════════════════════════════════════════ -->
 <header>
-  <button id="hdr-back" onclick="goHistory()">&#8592;</button>
+  <button id="hdr-back" onclick="goBack()">&#8592;</button>
   <span id="app-title">L I F T E D</span>
   <div id="hdr-right">
     <button id="hdr-star" onclick="toggleSessionFavorite()" title="Favorite">☆</button>
@@ -649,9 +810,40 @@ body[data-edit="false"] #edit-mode-banner { display: block; }
 
 <!-- ══ History Screen ════════════════════════════════════════ -->
 <div id="screen-history" class="screen active">
-  <button id="new-workout-btn" onclick="newWorkout()">＋ New Workout</button>
+  <div id="history-top-row">
+    <button id="new-workout-btn" onclick="newWorkout()">＋ New Workout</button>
+    <button id="progress-btn" onclick="goProgress()" title="Progress & PRs">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>
+      </svg>
+    </button>
+  </div>
   <div id="favorites-section"></div>
   <div id="history-section"></div>
+</div>
+
+<!-- ══ Progress Screen ══════════════════════════════════════ -->
+<div id="screen-progress" class="screen">
+  <div id="progress-main">
+    <div id="progress-list"></div>
+  </div>
+</div>
+
+<!-- ══ Exercise Detail Screen ═══════════════════════════════ -->
+<div id="screen-exercise" class="screen">
+  <div id="exercise-detail-main"></div>
+</div>
+
+<!-- ══ Library Editor Screen ════════════════════════════════ -->
+<div id="screen-library" class="screen">
+  <div id="library-main">
+    <div id="library-top-row">
+      <input id="library-search" type="text" placeholder="Search library…"
+             oninput="filterLibraryList(this.value)" autocomplete="off">
+      <button id="library-add-btn" onclick="addLibraryEntry()">＋ Add</button>
+    </div>
+    <div id="library-list"></div>
+  </div>
 </div>
 
 <!-- ══ Session Screen ════════════════════════════════════════ -->
@@ -663,7 +855,7 @@ body[data-edit="false"] #edit-mode-banner { display: block; }
              autocomplete="off" spellcheck="false" oninput="onWorkoutNameChange()">
       <div id="session-meta-row">
         <span id="session-date-text"></span>
-        <button id="open-copy-btn" onclick="openAsCopy()">Open as Copy</button>
+        <button id="open-copy-btn" onclick="useAsTemplate()">Use as Template</button>
       </div>
     </div>
 
@@ -673,8 +865,19 @@ body[data-edit="false"] #edit-mode-banner { display: block; }
 
     <!-- Active exercise entry -->
     <div id="current-ex">
-      <input id="ex-title-input" type="text" placeholder="Exercise Title"
-             autocomplete="off" autocorrect="off" spellcheck="false">
+      <div id="ex-title-wrap">
+        <input id="ex-title-input" type="text" placeholder="Exercise Title"
+               autocomplete="off" autocorrect="off" spellcheck="false"
+               oninput="onTitleInput()" onblur="onTitleBlur()" onfocus="onTitleFocus()">
+        <div id="ex-autocomplete"></div>
+        <div id="ex-last-used-hint"></div>
+        <div id="ex-target-hint"></div>
+        <div id="ex-save-prompt">
+          <span id="ex-save-prompt-text"></span>
+          <button onclick="saveExToLibrary()">Save</button>
+          <button onclick="dismissSavePrompt()">Skip</button>
+        </div>
+      </div>
       <div id="cur-meta">
         <label for="cur-rest-input">⏱ Rest:</label>
         <input id="cur-rest-input" class="rest-input" type="text" inputmode="decimal" placeholder="—" maxlength="6"
@@ -737,7 +940,7 @@ body[data-edit="false"] #edit-mode-banner { display: block; }
 // ═══════════════════════════════════════════════════════════
 //  IndexedDB
 // ═══════════════════════════════════════════════════════════
-const DB_NAME = 'lifted-db', DB_VER = 1;
+const DB_NAME = 'lifted-db', DB_VER = 2;
 let db = null;
 
 function openDB() {
@@ -751,6 +954,9 @@ function openDB() {
       }
       if (!d.objectStoreNames.contains('settings')) {
         d.createObjectStore('settings', { keyPath: 'key' });
+      }
+      if (e.oldVersion < 2) {
+        d.createObjectStore('library', { keyPath: 'name' });
       }
     };
     req.onsuccess = e => resolve(e.target.result);
@@ -798,9 +1004,13 @@ let isDark          = false;
 let editMode        = true;
 let modalCb         = null;
 let importPending   = null;
+let sessionPRs      = {};   // { 'bench press': { bestWeight:0, bestDuration:0 } }
+let libraryCache    = [];   // cached array of { name, targetSets, targetReps } objects
+let progressExName  = '';   // exercise name currently shown in #screen-exercise
+let orientationLock = true;
 
 // Active session metadata
-let activeSession = { id: null, name: '', date: null, isFavorite: false, completed: false };
+let activeSession = { id: null, name: '', date: null, isFavorite: false, completed: false, hadPR: false };
 
 // ═══════════════════════════════════════════════════════════
 //  Init
@@ -810,6 +1020,13 @@ async function init() {
   await migrateLocalStorage();
   const settingsDark = await dbGet('settings', 'isDark');
   if (settingsDark) applyDark(settingsDark.value);
+  const settingsOrientation = await dbGet('settings', 'orientationLock');
+  orientationLock = settingsOrientation ? settingsOrientation.value : true;
+  const orientToggle = document.getElementById('orientation-toggle');
+  if (orientToggle) orientToggle.checked = orientationLock;
+  applyOrientationLock();
+  await seedLibrary();
+  libraryCache = await dbGetAll('library');
   goHistory();
 }
 
@@ -827,6 +1044,124 @@ async function migrateLocalStorage() {
     if (d.isDark !== undefined) await dbPut('settings', { key:'isDark', value: d.isDark });
     localStorage.removeItem('lifted');
   } catch(_) {}
+}
+
+// ═══════════════════════════════════════════════════════════
+//  Library — exercise name store
+// ═══════════════════════════════════════════════════════════
+const SEED_EXERCISES = [
+  // ── CHEST ──────────────────────────────────────────────────────────────
+  'Barbell Bench Press', 'Dumbbell Bench Press',
+  'Barbell Incline Bench Press', 'Dumbbell Incline Bench Press',
+  'Barbell Decline Bench Press', 'Dumbbell Decline Bench Press',
+  'Dumbbell Fly', 'Incline Dumbbell Fly',
+  'Cable Fly', 'Low Cable Fly', 'High Cable Fly',
+  'Push-up', 'Wide Push-up', 'Diamond Push-up', 'Decline Push-up',
+  'Chest Dip', 'Pec Deck',
+
+  // ── BACK ───────────────────────────────────────────────────────────────
+  'Pull-up', 'Chin-up', 'Wide Grip Pull-up', 'Neutral Grip Pull-up',
+  'Lat Pulldown', 'Wide Grip Lat Pulldown', 'Close Grip Lat Pulldown',
+  'Barbell Row', 'Dumbbell Row', 'Pendlay Row', 'T-Bar Row',
+  'Seated Cable Row', 'Wide Grip Cable Row',
+  'Straight Arm Pulldown', 'Chest Supported Row',
+  'Single Arm Cable Row',
+
+  // ── SHOULDERS ──────────────────────────────────────────────────────────
+  'Barbell Overhead Press', 'Dumbbell Overhead Press',
+  'Seated Barbell Overhead Press', 'Seated Dumbbell Overhead Press',
+  'Arnold Press',
+  'Lateral Raise', 'Cable Lateral Raise',
+  'Front Raise', 'Barbell Front Raise', 'Dumbbell Front Raise',
+  'Face Pull', 'Rear Delt Fly', 'Rear Delt Cable Fly',
+  'Upright Row', 'Barbell Upright Row', 'Dumbbell Upright Row',
+  'Shrug', 'Barbell Shrug', 'Dumbbell Shrug',
+
+  // ── BICEPS ─────────────────────────────────────────────────────────────
+  'Barbell Bicep Curl', 'Dumbbell Bicep Curl',
+  'EZ Bar Curl', 'Preacher Curl', 'EZ Bar Preacher Curl',
+  'Hammer Curl', 'Cross Body Hammer Curl',
+  'Cable Curl', 'High Cable Curl',
+  'Concentration Curl', 'Incline Dumbbell Curl',
+  'Reverse Curl', 'Zottman Curl',
+
+  // ── TRICEPS ────────────────────────────────────────────────────────────
+  'Tricep Pushdown', 'Rope Tricep Pushdown',
+  'Skull Crusher', 'EZ Bar Skull Crusher',
+  'Tricep Dip', 'Bench Dip',
+  'Overhead Tricep Extension', 'Dumbbell Overhead Tricep Extension', 'EZ Bar Overhead Tricep Extension',
+  'Close Grip Bench Press', 'Tricep Kickback',
+
+  // ── LEGS ───────────────────────────────────────────────────────────────
+  'Barbell Back Squat', 'Barbell Front Squat', 'Goblet Squat', 'Dumbbell Squat',
+  'Bulgarian Split Squat', 'Dumbbell Bulgarian Split Squat',
+  'Leg Press', 'Hack Squat',
+  'Leg Extension', 'Leg Curl', 'Seated Leg Curl',
+  'Calf Raise', 'Seated Calf Raise', 'Single Leg Calf Raise',
+  'Hip Thrust', 'Barbell Hip Thrust', 'Dumbbell Hip Thrust',
+  'Glute Bridge', 'Single Leg Glute Bridge',
+  'Step-up', 'Dumbbell Step-up', 'Lateral Step-up',
+  'Lunge', 'Walking Lunge', 'Reverse Lunge', 'Dumbbell Lunge', 'Barbell Lunge',
+  'Curtsy Lunge', 'Lateral Lunge',
+  'Wall Sit', 'Nordic Curl',
+
+  // ── DEADLIFT VARIATIONS ────────────────────────────────────────────────
+  'Barbell Deadlift', 'Dumbbell Deadlift',
+  'Barbell Romanian Deadlift', 'Dumbbell Romanian Deadlift',
+  'Barbell Sumo Deadlift', 'Dumbbell Sumo Deadlift',
+  'Trap Bar Deadlift', 'Good Morning',
+  'Single Leg Deadlift', 'Dumbbell Single Leg Deadlift',
+
+  // ── CORE ───────────────────────────────────────────────────────────────
+  'Plank', 'Side Plank', 'Weighted Plank',
+  'Crunch', 'Cable Crunch', 'Decline Crunch',
+  'Russian Twist', 'Weighted Russian Twist',
+  'Leg Raise', 'Hanging Leg Raise', 'Hanging Knee Raise',
+  'Ab Wheel Rollout', 'Dragon Flag',
+  'Bicycle Crunch', 'Toe Touch Crunch',
+  'Dead Bug', 'Bird Dog', 'Pallof Press',
+  'Hollow Body Hold',
+
+  // ── FUNCTIONAL / CONDITIONING ──────────────────────────────────────────
+  "Farmer's Carry", "Single Arm Farmer's Carry", 'Suitcase Carry',
+  'Sled Push', 'Sled Pull',
+  'Battle Ropes',
+  'Box Jump', 'Depth Jump', 'Broad Jump',
+  'Burpee', 'Burpee Box Jump',
+  'Kettlebell Swing', 'Kettlebell Clean', 'Kettlebell Press',
+  'Medicine Ball Slam', 'Medicine Ball Throw',
+  'Jump Squat', 'Jump Lunge',
+  'Clean', 'Power Clean', 'Hang Clean',
+  'Snatch', 'Hang Snatch',
+];
+
+async function seedLibrary() {
+  const existing = await dbGetAll('library');
+  const existingNames = new Set(existing.map(e => e.name));
+  for (const name of SEED_EXERCISES) {
+    if (!existingNames.has(name)) await dbPut('library', { name });
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  Orientation Lock
+// ═══════════════════════════════════════════════════════════
+function applyOrientationLock() {
+  if (orientationLock) {
+    if (screen.orientation && screen.orientation.lock) {
+      screen.orientation.lock('portrait').catch(() => {});
+    }
+  } else {
+    if (screen.orientation && screen.orientation.unlock) {
+      screen.orientation.unlock();
+    }
+  }
+}
+
+async function toggleOrientationLock() {
+  orientationLock = document.getElementById('orientation-toggle').checked;
+  await dbPut('settings', { key: 'orientationLock', value: orientationLock });
+  applyOrientationLock();
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -852,6 +1187,7 @@ async function saveSession() {
     date: activeSession.date,
     isFavorite: activeSession.isFavorite,
     completed: activeSession.completed,
+    hadPR: activeSession.hadPR || false,
     exercises
   };
   if (activeSession.id) data.id = activeSession.id;
@@ -873,6 +1209,327 @@ function setScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + name).classList.add('active');
   document.body.dataset.screen = name;
+}
+
+function goBack() {
+  const screen = document.body.dataset.screen;
+  if (screen === 'session') goHistory();
+  else if (screen === 'exercise') goProgress();
+  else if (screen === 'library') goHistory();
+  else goHistory();
+}
+
+async function goProgress() {
+  setScreen('progress');
+  await renderProgress();
+}
+
+async function renderProgress() {
+  const sessions = await dbGetAll('sessions');
+  // Collect all unique exercise names
+  const namesSet = new Set();
+  sessions.forEach(sess => (sess.exercises || []).forEach(ex => {
+    if (ex.title) namesSet.add(ex.title.trim());
+  }));
+  const names = Array.from(namesSet).sort((a, b) => a.localeCompare(b));
+  const list = document.getElementById('progress-list');
+  if (!names.length) {
+    list.innerHTML = '<div class="progress-empty">No exercises logged yet.<br>Complete a workout to see progress here.</div>';
+    return;
+  }
+  // Build rows (PR computed lazily on tap; show quick session count here)
+  list.innerHTML = `
+    <input id="progress-search" type="text" placeholder="Search exercises…"
+           oninput="filterProgressList(this.value)" autocomplete="off">
+    ${names.map(name => {
+      const count = sessions.filter(s => (s.exercises||[]).some(e => (e.title||'').trim() === name)).length;
+      return `<div class="progress-ex-row" onclick="goExerciseDetail('${esc(name)}')">
+        <span class="progress-ex-name">${esc(name)}</span>
+        <span class="progress-ex-pr">${count} session${count!==1?'s':''}</span>
+      </div>`;
+    }).join('')}
+  `;
+}
+
+function filterProgressList(q) {
+  document.querySelectorAll('.progress-ex-row').forEach(row => {
+    const match = row.querySelector('.progress-ex-name').textContent.toLowerCase().includes(q.toLowerCase());
+    row.style.display = match ? '' : 'none';
+  });
+}
+
+async function goExerciseDetail(name) {
+  progressExName = name;
+  setScreen('exercise');
+  await renderExerciseDetail(name);
+}
+
+async function computePRs(name) {
+  const sessions = await dbGetAll('sessions');
+  const nameLow = name.toLowerCase().trim();
+  let bestWeight = 0, bestWeightDate = null;
+  let bestDuration = 0, bestDurationDate = null;
+  let totalSessions = 0;
+  sessions.forEach(sess => {
+    let found = false;
+    (sess.exercises || []).forEach(ex => {
+      if ((ex.title || '').toLowerCase().trim() !== nameLow) return;
+      found = true;
+      (ex.sets || []).forEach(s => {
+        if (ex.timed) {
+          const dur = parseFloat(s.reps) || 0;
+          if (dur > bestDuration) { bestDuration = dur; bestDurationDate = sess.date; }
+        } else {
+          const w = parseFloat(s.weight) || 0;
+          if (w > bestWeight) { bestWeight = w; bestWeightDate = sess.date; }
+        }
+      });
+    });
+    if (found) totalSessions++;
+  });
+  return { bestWeight, bestWeightDate, bestDuration, bestDurationDate, totalSessions };
+}
+
+async function getLastUsed(name) {
+  const sessions = await dbGetAll('sessions');
+  sessions.sort((a, b) => new Date(b.date) - new Date(a.date));
+  const nameLow = name.toLowerCase().trim();
+  for (const sess of sessions) {
+    const ex = (sess.exercises || []).find(e => (e.title || '').toLowerCase().trim() === nameLow);
+    if (!ex || !ex.sets || !ex.sets.length) continue;
+    const dateStr = sess.date
+      ? new Date(sess.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+      : '';
+    if (ex.timed) {
+      const best = Math.max(...ex.sets.map(s => parseFloat(s.reps) || 0));
+      return best ? `Last: ${best} sec — ${dateStr}` : null;
+    } else {
+      const bestSet = ex.sets.reduce((b, s) => (parseFloat(s.weight) || 0) > (parseFloat(b.weight) || 0) ? s : b, ex.sets[0]);
+      const parts = [];
+      if (bestSet.weight) parts.push(bestSet.weight + ' lbs');
+      if (bestSet.reps)   parts.push(bestSet.reps + ' reps');
+      return parts.length ? `Last: ${parts.join(' × ')} — ${dateStr}` : null;
+    }
+  }
+  return null;
+}
+
+async function renderExerciseDetail(name) {
+  const el = document.getElementById('exercise-detail-main');
+  el.innerHTML = '<p style="padding:20px;color:var(--text-muted)">Loading…</p>';
+  const sessions = await dbGetAll('sessions');
+  sessions.sort((a, b) => new Date(a.date) - new Date(b.date));
+  const nameLow = name.toLowerCase().trim();
+  const prs = await computePRs(name);
+
+  // Collect per-session data points
+  const dataPoints = [];
+  sessions.forEach(sess => {
+    const ex = (sess.exercises || []).find(e => (e.title || '').toLowerCase().trim() === nameLow);
+    if (!ex || !ex.sets || !ex.sets.length) return;
+    const dateStr = sess.date
+      ? new Date(sess.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+      : '?';
+    if (ex.timed) {
+      const best = Math.max(...ex.sets.map(s => parseFloat(s.reps) || 0));
+      const vol  = ex.sets.reduce((sum, s) => sum + (parseFloat(s.reps) || 0), 0);
+      dataPoints.push({ x: dateStr, bestVal: best, volume: vol, timed: true });
+    } else {
+      const best = Math.max(...ex.sets.map(s => parseFloat(s.weight) || 0));
+      const vol  = ex.sets.reduce((sum, s) => sum + (parseFloat(s.reps) || 0) * (parseFloat(s.weight) || 0), 0);
+      dataPoints.push({ x: dateStr, bestVal: best, volume: vol, timed: false });
+    }
+  });
+
+  const last16 = dataPoints.slice(-16);
+  const isTimed = last16.length && last16[last16.length - 1].timed;
+  const prDateFmt = d => d ? new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
+
+  el.innerHTML = `
+    <div class="ex-detail-title">${esc(name)}</div>
+    <p style="font-size:.8rem;color:var(--text-muted);margin-bottom:14px">${prs.totalSessions} session${prs.totalSessions!==1?'s':''}</p>
+    <div class="pr-summary-box">
+      <h4>Personal Records</h4>
+      ${isTimed ? `
+        <div class="pr-row">
+          <span>Best Duration</span>
+          <span><span class="pr-val">${prs.bestDuration ? prs.bestDuration + ' sec' : '—'}</span>
+          <span class="pr-date"> ${prDateFmt(prs.bestDurationDate)}</span></span>
+        </div>
+      ` : `
+        <div class="pr-row">
+          <span>Best Weight</span>
+          <span><span class="pr-val">${prs.bestWeight ? prs.bestWeight + ' lbs' : '—'}</span>
+          <span class="pr-date"> ${prDateFmt(prs.bestWeightDate)}</span></span>
+        </div>
+      `}
+    </div>
+    <div class="chart-section">
+      <h4>${isTimed ? 'Best Duration per Session (sec)' : 'Best Weight per Session (lbs)'}</h4>
+      ${buildLineChart(last16.map(d => ({ x: d.x, y: d.bestVal })))}
+    </div>
+    <div class="chart-section">
+      <h4>${isTimed ? 'Total Duration per Session (sec)' : 'Volume per Session (reps × lbs)'}</h4>
+      ${buildBarChart(last16.map(d => ({ x: d.x, y: d.volume })))}
+    </div>
+  `;
+}
+
+function buildLineChart(pts) {
+  if (!pts.length) return '<p class="chart-empty">No data yet</p>';
+  const W=320, H=180, PL=44, PR=12, PT=14, PB=34;
+  const plotW=W-PL-PR, plotH=H-PT-PB, n=pts.length;
+  const vals=pts.map(d=>d.y);
+  const minV=Math.min(...vals), maxV=Math.max(...vals);
+  const range=maxV-minV||1;
+  const toX=i=>PL+(n===1?plotW/2:i*plotW/(n-1));
+  const toY=v=>PT+plotH-(v-minV)/range*plotH;
+  let grid='', xlabels='', circles='';
+  for (let g=0;g<=4;g++) {
+    const y=PT+g*plotH/4, val=maxV-g*range/4;
+    grid+=`<line x1="${PL}" y1="${y}" x2="${W-PR}" y2="${y}" stroke="var(--border)" stroke-width="1"/>`;
+    grid+=`<text x="${PL-4}" y="${y+4}" text-anchor="end" font-size="9" fill="var(--text-muted)">${Math.round(val)}</text>`;
+  }
+  const showIdx=n<=5?pts.map((_,i)=>i):[0,Math.floor((n-1)/2),n-1];
+  showIdx.forEach(i=>{
+    xlabels+=`<text x="${toX(i)}" y="${H-4}" text-anchor="middle" font-size="9" fill="var(--text-muted)">${pts[i].x}</text>`;
+  });
+  circles=pts.map((d,i)=>`<circle cx="${toX(i)}" cy="${toY(d.y)}" r="4" fill="var(--blue)" stroke="var(--surface)" stroke-width="2"/>`).join('');
+  const polyline=pts.map((d,i)=>`${toX(i)},${toY(d.y)}`).join(' ');
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" preserveAspectRatio="xMidYMid meet">
+    ${grid}
+    <polyline points="${polyline}" fill="none" stroke="var(--blue)" stroke-width="2.5" stroke-linejoin="round"/>
+    ${circles}${xlabels}</svg>`;
+}
+
+function buildBarChart(pts) {
+  if (!pts.length) return '<p class="chart-empty">No data yet</p>';
+  const W=320, H=180, PL=44, PR=12, PT=14, PB=34;
+  const plotW=W-PL-PR, plotH=H-PT-PB, n=pts.length;
+  const maxV=Math.max(...pts.map(d=>d.y),1);
+  const barW=Math.max(4,plotW/n-4);
+  let grid='', bars='', xlabels='';
+  for (let g=1;g<=4;g++) {
+    const y=PT+plotH-g*plotH/4, val=maxV*g/4;
+    grid+=`<line x1="${PL}" y1="${y}" x2="${W-PR}" y2="${y}" stroke="var(--border)" stroke-width="1"/>`;
+    grid+=`<text x="${PL-4}" y="${y+4}" text-anchor="end" font-size="9" fill="var(--text-muted)">${Math.round(val)}</text>`;
+  }
+  pts.forEach((d,i)=>{
+    const x=PL+i*plotW/n+(plotW/n-barW)/2;
+    const bH=Math.max(2,(d.y/maxV)*plotH), y=PT+plotH-bH;
+    bars+=`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${bH.toFixed(1)}" rx="3" fill="var(--blue)" opacity="0.85"/>`;
+    if (n<=6||i===0||i===n-1) xlabels+=`<text x="${(x+barW/2).toFixed(1)}" y="${H-4}" text-anchor="middle" font-size="9" fill="var(--text-muted)">${d.x}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" preserveAspectRatio="xMidYMid meet">
+    ${grid}
+    <line x1="${PL}" y1="${PT}" x2="${PL}" y2="${PT+plotH}" stroke="var(--border)" stroke-width="1"/>
+    ${bars}${xlabels}</svg>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  Library Editor
+// ═══════════════════════════════════════════════════════════
+async function goLibrary() {
+  closeSettings();
+  setScreen('library');
+  await renderLibrary();
+}
+
+async function renderLibrary() {
+  const list = document.getElementById('library-list');
+  list.innerHTML = '<p style="padding:20px;color:var(--text-muted);text-align:center">Loading…</p>';
+  const entries = [...libraryCache].sort((a, b) => a.name.localeCompare(b.name));
+  if (!entries.length) {
+    list.innerHTML = '<p style="padding:20px;color:var(--text-muted);text-align:center">Library is empty.</p>';
+    return;
+  }
+  list.innerHTML = entries.map(e => {
+    const targetStr = (e.targetSets || e.targetReps)
+      ? [(e.targetSets ? e.targetSets + ' sets' : ''), (e.targetReps ? e.targetReps + ' reps' : '')].filter(Boolean).join(' × ')
+      : '';
+    return `
+      <div class="lib-row" id="lib-row-${CSS.escape(e.name)}">
+        <div class="lib-row-header" onclick="toggleLibraryRow('${esc(e.name)}')">
+          <span class="lib-row-name">${esc(e.name)}</span>
+          ${targetStr ? `<span class="lib-row-target">${esc(targetStr)}</span>` : ''}
+          <span class="lib-row-chevron">▶</span>
+        </div>
+        <div class="lib-edit-body">
+          <div class="lib-edit-row">
+            <label>Name</label>
+            <input class="lib-edit-input" id="lib-name-${esc(e.name)}" type="text" value="${esc(e.name)}" autocomplete="off">
+          </div>
+          <div class="lib-edit-row">
+            <label>Target Sets</label>
+            <input class="lib-edit-input" id="lib-sets-${esc(e.name)}" type="number" min="1" max="99"
+                   value="${e.targetSets || ''}" placeholder="—" style="max-width:70px">
+            <label>Target Reps</label>
+            <input class="lib-edit-input" id="lib-reps-${esc(e.name)}" type="text"
+                   value="${e.targetReps || ''}" placeholder="e.g. 8-12">
+          </div>
+          <div class="lib-edit-actions">
+            <button class="lib-save-btn" onclick="saveLibraryEntry('${esc(e.name)}')">Save</button>
+            <button class="lib-del-btn"  onclick="deleteLibraryEntry('${esc(e.name)}')">🗑</button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function toggleLibraryRow(name) {
+  const row = document.getElementById('lib-row-' + CSS.escape(name));
+  if (row) row.classList.toggle('open');
+}
+
+async function saveLibraryEntry(originalName) {
+  const newName   = (document.getElementById('lib-name-'+ originalName)?.value || '').trim();
+  const targetSets= parseInt(document.getElementById('lib-sets-'+ originalName)?.value) || null;
+  const targetReps= (document.getElementById('lib-reps-'+ originalName)?.value || '').trim() || null;
+  if (!newName) return;
+  const entry = { name: newName, targetSets, targetReps };
+  if (newName !== originalName) await dbDelete('library', originalName);
+  await dbPut('library', entry);
+  // Update cache
+  const idx = libraryCache.findIndex(e => e.name === originalName);
+  if (idx >= 0) libraryCache[idx] = entry;
+  else libraryCache.push(entry);
+  libraryCache.sort((a, b) => a.name.localeCompare(b.name));
+  await renderLibrary();
+}
+
+async function deleteLibraryEntry(name) {
+  showModal('Delete Exercise?', `Remove "${name}" from the library?`, 'Delete', 'var(--red)', async () => {
+    await dbDelete('library', name);
+    libraryCache = libraryCache.filter(e => e.name !== name);
+    await renderLibrary();
+  });
+}
+
+function filterLibraryList(q) {
+  document.querySelectorAll('.lib-row').forEach(row => {
+    const nameEl = row.querySelector('.lib-row-name');
+    const match = nameEl && nameEl.textContent.toLowerCase().includes(q.toLowerCase());
+    row.style.display = match ? '' : 'none';
+  });
+}
+
+function addLibraryEntry() {
+  showModal('Add Exercise', 'Enter the exercise name:', 'Add', 'var(--blue)', async () => {
+    const nameInput = document.querySelector('#modal-body input');
+    const name = nameInput ? nameInput.value.trim() : '';
+    if (!name) return;
+    const entry = { name };
+    await dbPut('library', entry);
+    libraryCache.push(entry);
+    libraryCache.sort((a, b) => a.name.localeCompare(b.name));
+    await renderLibrary();
+  });
+  // Replace modal body with input
+  setTimeout(() => {
+    const body = document.getElementById('modal-body');
+    body.innerHTML = '<input type="text" placeholder="Exercise name" style="width:100%;padding:8px;margin-top:8px;border:1.5px solid var(--border);border-radius:8px;font-size:1rem;background:var(--surface2);color:var(--text)" autocomplete="off">';
+    body.querySelector('input').focus();
+  }, 10);
 }
 
 function applyEditMode() {
@@ -915,9 +1572,10 @@ async function goHistory() {
 }
 
 async function newWorkout() {
-  activeSession = { id: null, name: '', date: null, isFavorite: false, completed: false };
+  activeSession = { id: null, name: '', date: null, isFavorite: false, completed: false, hadPR: false };
   exercises     = [];
   editMode      = true;
+  sessionPRs    = {};
   resetCurrentEx();
   openSessionScreen();
 }
@@ -925,9 +1583,11 @@ async function newWorkout() {
 async function openSession(id) {
   const sess = await dbGet('sessions', id);
   if (!sess) return;
-  activeSession = { id: sess.id, name: sess.name || '', date: sess.date, isFavorite: sess.isFavorite, completed: sess.completed };
+  activeSession = { id: sess.id, name: sess.name || '', date: sess.date,
+    isFavorite: sess.isFavorite, completed: sess.completed, hadPR: sess.hadPR || false };
   exercises     = sess.exercises || [];
   editMode      = !sess.completed;
+  sessionPRs    = {};
   resetCurrentEx();
   openSessionScreen();
 }
@@ -1001,7 +1661,7 @@ function buildSessCard(sess) {
   wrap.innerHTML = `
     <div class="sess-row">
       <div class="sess-card-body" onclick="openSession(${sess.id})">
-        <div class="sess-name ${name ? '' : 'untitled'}">${name ? esc(name) : 'Untitled Workout'}</div>
+        <div class="sess-name ${name ? '' : 'untitled'}">${name ? esc(name) : 'Untitled Workout'}${sess.hadPR ? ' <span class="sess-pr-trophy" title="Personal Record set this session">🏆</span>' : ''}</div>
         <div class="sess-meta">${dateStr}${exCount ? ' &nbsp;·&nbsp; ' + exCount + ' exercise' + (exCount !== 1 ? 's':'') : ''}</div>
       </div>
       <button class="sess-star-btn ${sess.isFavorite ? 'active':''}"
@@ -1050,10 +1710,15 @@ async function toggleSessionFavorite() {
 // ═══════════════════════════════════════════════════════════
 //  Open As Copy
 // ═══════════════════════════════════════════════════════════
-function openAsCopy() {
-  const copiedExercises = JSON.parse(JSON.stringify(exercises));
-  activeSession = { id: null, name: activeSession.name ? 'Copy of ' + activeSession.name : '', date: null, isFavorite: false, completed: false };
-  exercises     = copiedExercises;
+function useAsTemplate() {
+  const templateExercises = exercises.map(ex => ({
+    ...ex, sets: [{ reps: '', weight: '' }]
+  }));
+  activeSession = { id: null, name: activeSession.name ? 'Template: ' + activeSession.name : '',
+    date: null, isFavorite: false, completed: false, hadPR: false };
+  exercises     = templateExercises;
+  editMode      = true;
+  sessionPRs    = {};
   resetCurrentEx();
   openSessionScreen();
 }
@@ -1123,7 +1788,31 @@ function render() {
   document.querySelectorAll('.ex-card').forEach(card => attachSwipeHandlers(card));
 }
 
-function updateSavedSet(ei, si, field, val) { exercises[ei].sets[si][field] = val; save(); }
+function updateSavedSet(ei, si, field, val) {
+  exercises[ei].sets[si][field] = val;
+  save();
+  const ex = exercises[ei];
+  if (ex.title) checkForPR(ex.title, !!ex.timed, ex.sets[si].weight, ex.sets[si].reps);
+}
+
+async function checkForPR(exName, isTimed, weight, reps) {
+  if (!exName || activeSession.hadPR) return; // already flagged this session
+  const key = exName.toLowerCase().trim();
+  if (!sessionPRs[key]) sessionPRs[key] = await computePRs(exName);
+  const pr = sessionPRs[key];
+  let isPR = false;
+  if (isTimed) {
+    const dur = parseFloat(reps) || 0;
+    if (dur > 0 && dur > pr.bestDuration) isPR = true;
+  } else {
+    const w = parseFloat(weight) || 0;
+    if (w > 0 && w > pr.bestWeight) isPR = true;
+  }
+  if (isPR) {
+    activeSession.hadPR = true;
+    save();
+  }
+}
 
 // Sync rest time across all exercises sharing the same superset color
 function syncSupersetRest(ei, val) {
@@ -1337,12 +2026,23 @@ function renderCurrentSets() {
     <div class="set-row-wrap">
       <div class="set-row">
         <div class="set-num">${i+1}</div>
-        <input class="set-input" type="text" inputmode="decimal" value="${esc(s.reps)}" placeholder="${repLabel}">
-        <input class="set-input" type="text" inputmode="decimal" value="${esc(s.weight)}" placeholder="lbs">
+        <input class="set-input" type="text" inputmode="decimal" value="${esc(s.reps)}" placeholder="${repLabel}"
+               onchange="checkCurrentSetPR()">
+        <input class="set-input" type="text" inputmode="decimal" value="${esc(s.weight)}" placeholder="lbs"
+               onchange="checkCurrentSetPR()">
       </div>
       <button class="set-del-btn" onclick="deleteCurrentSet(${i})" title="Delete set">🗑</button>
     </div>`).join('');
   attachSwipeHandlers(c);
+}
+
+function checkCurrentSetPR() {
+  flushCurrentInputs();
+  const title = document.getElementById('ex-title-input').value.trim();
+  if (!title) return;
+  currentSets.forEach(s => {
+    checkForPR(title, currentTimed, s.weight, s.reps);
+  });
 }
 function deleteCurrentSet(i) {
   if (currentSets.length===1) return;
@@ -1411,8 +2111,104 @@ function resumeWorkout() {
   },60);
 }
 
+// ═══════════════════════════════════════════════════════════
+//  Exercise Library — Autocomplete + Last-Used Hint
+// ═══════════════════════════════════════════════════════════
+let _acBlurTimer = null;
+let _pendingNewName = '';
+
+function onTitleInput() {
+  const val = document.getElementById('ex-title-input').value.trim();
+  dismissSavePrompt();
+  document.getElementById('ex-last-used-hint').style.display = 'none';
+  document.getElementById('ex-target-hint').style.display = 'none';
+  if (!val) { hideAutocomplete(); return; }
+  const matches = libraryCache.filter(e => e.name.toLowerCase().includes(val.toLowerCase())).slice(0, 6);
+  if (matches.length) showAutocomplete(matches.map(e => e.name));
+  else hideAutocomplete();
+}
+
+function onTitleFocus() {
+  const val = document.getElementById('ex-title-input').value.trim();
+  if (val) onTitleInput();
+}
+
+function onTitleBlur() {
+  _acBlurTimer = setTimeout(async () => {
+    hideAutocomplete();
+    const val = document.getElementById('ex-title-input').value.trim();
+    if (!val) return;
+    const entry = libraryCache.find(e => e.name.toLowerCase() === val.toLowerCase());
+    if (!entry) {
+      _pendingNewName = val;
+      const prompt = document.getElementById('ex-save-prompt');
+      document.getElementById('ex-save-prompt-text').textContent = `"${val}" is new. Save to library?`;
+      prompt.style.display = 'flex';
+    } else {
+      const hint = await getLastUsed(val);
+      const el = document.getElementById('ex-last-used-hint');
+      if (hint) { el.textContent = hint; el.style.display = 'block'; }
+      showTargetHint(entry);
+    }
+  }, 180);
+}
+
+function showAutocomplete(names) {
+  const el = document.getElementById('ex-autocomplete');
+  el.innerHTML = names.map(n => `<div class="ac-item" onmousedown="selectAutoComplete('${esc(n)}')">${esc(n)}</div>`).join('');
+  el.style.display = 'block';
+}
+
+function hideAutocomplete() {
+  document.getElementById('ex-autocomplete').style.display = 'none';
+}
+
+async function selectAutoComplete(name) {
+  clearTimeout(_acBlurTimer);
+  document.getElementById('ex-title-input').value = name;
+  hideAutocomplete();
+  dismissSavePrompt();
+  const hint = await getLastUsed(name);
+  const el = document.getElementById('ex-last-used-hint');
+  if (hint) { el.textContent = hint; el.style.display = 'block'; }
+  else el.style.display = 'none';
+  const entry = libraryCache.find(e => e.name.toLowerCase() === name.toLowerCase());
+  showTargetHint(entry);
+}
+
+function showTargetHint(entry) {
+  const el = document.getElementById('ex-target-hint');
+  if (entry && (entry.targetSets || entry.targetReps)) {
+    const parts = [];
+    if (entry.targetSets) parts.push(entry.targetSets + ' sets');
+    if (entry.targetReps) parts.push(entry.targetReps + ' reps');
+    el.textContent = 'Target: ' + parts.join(' × ');
+    el.style.display = 'block';
+  } else {
+    el.style.display = 'none';
+  }
+}
+
+async function saveExToLibrary() {
+  if (!_pendingNewName) return;
+  await dbPut('library', { name: _pendingNewName });
+  libraryCache.push({ name: _pendingNewName });
+  libraryCache.sort((a, b) => a.name.localeCompare(b.name));
+  _pendingNewName = '';
+  dismissSavePrompt();
+}
+
+function dismissSavePrompt() {
+  _pendingNewName = '';
+  document.getElementById('ex-save-prompt').style.display = 'none';
+}
+
 function resetCurrentEx() {
   document.getElementById('ex-title-input').value='';
+  hideAutocomplete();
+  document.getElementById('ex-last-used-hint').style.display='none';
+  document.getElementById('ex-target-hint').style.display='none';
+  dismissSavePrompt();
   document.getElementById('cur-rest-input').value='';
   document.getElementById('cur-notes-input').value='';
   document.getElementById('cur-notes-body').classList.remove('open');
