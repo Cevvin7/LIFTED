@@ -1683,12 +1683,16 @@ function useAsTemplate() {
     ...ex, sets: [{ reps: '', weight: '' }]
   }));
   const now = new Date();
-  const day = now.getDate();
-  const suffix = day === 1 || day === 21 || day === 31 ? 'st'
-               : day === 2 || day === 22 ? 'nd'
-               : day === 3 || day === 23 ? 'rd' : 'th';
-  const dateTitle = now.toLocaleDateString('en-US', { weekday:'long', month:'long', year:'numeric' })
-    .replace(/(\w+)\s(\w+)\s(\d+)/, (_, wd, mo, yr) => `${wd}, ${mo} ${day}${suffix}, ${yr}`);
+const day = now.getDate();
+const suffix = day === 1 || day === 21 || day === 31 ? 'st'
+             : day === 2 || day === 22 ? 'nd'
+             : day === 3 || day === 23 ? 'rd' : 'th';
+
+const weekday = now.toLocaleDateString('en-US', { weekday: 'long' });
+const month   = now.toLocaleDateString('en-US', { month: 'long' });
+const year    = now.getFullYear();
+
+const dateTitle = `${weekday}, ${month} ${day}${suffix}, ${year}`;
   activeSession = { id: null, name: dateTitle,
     date: null, isFavorite: false, completed: false, hadPR: false };
   exercises     = templateExercises;
